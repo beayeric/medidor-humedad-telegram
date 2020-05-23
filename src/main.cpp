@@ -83,7 +83,8 @@ void handleNewMessages(int numNewMessages) {
     if (from_name == "") from_name = "Guest";
 
     if (text == "/estado") {
-      teclapower();
+      teclapower();  /// esta es la función de Pablo .
+      
       bot.sendMessage(chat_id, "El estado es:");  
 
    
