@@ -11,10 +11,6 @@
 const char* ssid = "xxxx";
 const char* password = "xxxx";
 
-int contconexion = 0;
-
-#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321 // definimos el sensor de temperatura y humedad
-
 //Configuramos la conexión con telegram
 //We set up the telegram connection
 const char BotToken[] = "xxxxxxxxxxxxxxxxx";
@@ -27,49 +23,16 @@ long Bot_lasttime;   //last time messages' scan has been done
 bool Start = false;
 
 
-
 //----------------------------------------------------------------------------------
 //Funciones de toma de temperatura
 
-
- 
-
+#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321 // definimos el sensor de temperatura y humedad
 const int DHTPin = D4;     // el pin donde esta conectado el sensor
  
 DHT dht(DHTPin, DHTTYPE);
- 
-void setup() {
-   Serial.begin(9600);
-   Serial.println("Test de sonda!");
- 
-   dht.begin();
-}
- 
-void loop() {
-   // Wait a few seconds between measurements.
-   delay(4000);
- 
-   // Reading temperature or humidity takes about 250 milliseconds!
-   float h = dht.readHumidity();
-   float t = dht.readTemperature();
- 
-   if (isnan(h) || isnan(t)) {
-      Serial.println("Error de conexión con la sonda!");
-      return;
-   }
- 
- 
-   Serial.print("La humedad es de: ");
-   Serial.print(h);
-   Serial.print(" %\t");
-   Serial.print("La temperatura es de: ");
-   Serial.print(t);
-   Serial.print(" *C ");
-}
 
 //----------------------------------------------------------------------------------
 //Configuramos el bot de telegram --- We set up the telegram bot 
-
 
 void handleNewMessages(int numNewMessages) {
   Serial.println("handleNewMessages");
@@ -94,23 +57,19 @@ void handleNewMessages(int numNewMessages) {
     }
   }
 }  
-//-------------------------------------------------------
-void setup() {
-  ac.begin();
-  #if ESP8266
-  Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY);
-  #else  // ESP8266
-  Serial.begin(115200, SERIAL_8N1);
-  #endif 
-  Serial.println("");
-  Serial.println("");
  
+void setup() {
+   Serial.begin(9600);
+   Serial.println("Test de sonda!");
+ 
+   dht.begin();
 
-//----------------------------------------------------------------------------------
+   // TODO: Aqui igual debería conectarse al WIFI ¿no?
+}
+ 
 void loop() {
-  server.handleClient();  
-  
-  if (millis() > Bot_lasttime + Bot_mtbs)  {
+   
+   if (millis() > Bot_lasttime + Bot_mtbs)  {
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     while(numNewMessages) {
       Serial.println("got response");
@@ -120,4 +79,24 @@ void loop() {
 
     Bot_lasttime = millis();
   }
+   
+   // Wait a few seconds between measurements.
+   delay(4000);
+ 
+   // Reading temperature or humidity takes about 250 milliseconds!
+   float h = dht.readHumidity();
+   float t = dht.readTemperature();
+ 
+   if (isnan(h) || isnan(t)) {
+      Serial.println("Error de conexión con la sonda!");
+      return;
+   }
+ 
+ 
+   Serial.print("La humedad es de: ");
+   Serial.print(h);
+   Serial.print(" %\t");
+   Serial.print("La temperatura es de: ");
+   Serial.print(t);
+   Serial.print(" *C ");
 }
