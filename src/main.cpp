@@ -52,19 +52,14 @@ void handleNewMessages(int numNewMessages) {
 
 
     if (text == "/estado") {
-      float h = dht.readHumidity();
-      float t = dht.readTemperature();
-      bot.sendMessage(chat_id, "El estado de le temperatura y la humedad es:", "");
+      bot.sendMessage(chat_id, str_tem , str_hum"");
     }
-
+    
     if (text == "/temperatura") {
-      float t = dht.readTemperature();
-      bot.sendMessage(chat_id, "La temperatura en sala es de:", "");
+      bot.sendMessage(chat_id, str_tem , "");
     }
-
     if (text == "/humedad") {
-      float h = dht.readHumidity();
-      bot.sendMessage(chat_id, "La humedad en sala es de:", "");
+      bot.sendMessage(chat_id, str_hum , "");
     }
 
     }
@@ -104,9 +99,6 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  delay(10);
-  digitalWrite(LED_BUILTIN, HIGH); // el led OFF al inicio
 
   client.setInsecure();
 
@@ -129,12 +121,18 @@ void loop() {
   delay(4000); // tiempo de espera entre lecturas
  
   
-   float h = dht.readHumidity();
-   float t = dht.readTemperature();
- 
-   if (isnan(h) || isnan(t)) {
-      Serial.println("Error de conexión con la sonda!");
-      return;
+    h = dht.readHumidity();
+    t = dht.readTemperature();
+
+    if (isnan(h) || isnan(t)) {
+        Serial.println("¡Error al leer del sensor DHT!");
+        return;
+    }
+    // Creo los string en variables globales para tener acceso en todo el programa 
+    str_tem = "Temperatura : " + String(t, 2);   
+    Serial.println(str_tem);
+    str_hum = "Humedad : " + String(h, 2);
+    Serial.println(str_hum);
    }
  
  
