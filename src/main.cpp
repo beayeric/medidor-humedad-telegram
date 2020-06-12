@@ -64,7 +64,7 @@ void handleNewMessages(int numNewMessages) {
 
     if (text == "/humedad") {
       dht.readHumidity();
-      bot.sendMessage(chat_id, "La temperatura en sala es de:", "");
+      bot.sendMessage(chat_id, "La humedad en sala es de:", "");
     }
 
     }
