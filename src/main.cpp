@@ -12,7 +12,6 @@
 #include <Adafruit_Sensor.h> //Librería para la lectura del sensor V1.0.3
 
 
-
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
 char ssid[] = "nombre de la red";         		  // el nombre de su red SSID
@@ -35,6 +34,8 @@ bool Start = false;
 const int DHTPin = D4;  // Pin donde esta conectado ( por defecto en nuestro proyecto esta conectado en el pin 4)
 DHT dht(DHTPin, DHTTYPE);
 
+String str_tem = "";
+String str_hum = "";
 
 void handleNewMessages(int numNewMessages) {
   Serial.println("handleNewMessages");
@@ -50,18 +51,15 @@ void handleNewMessages(int numNewMessages) {
 
 //--------------Configurar estados y respuestas del bot de telegram-----------------------//
 
-
-    if (text == "/estado") {
-      bot.sendMessage(chat_id, str_tem , str_hum"");
-    }
+    // if (text == "/estado") {
+    //   bot.sendMessage(chat_id, str_tem , str_hum"");
+    // }
     
     if (text == "/temperatura") {
       bot.sendMessage(chat_id, str_tem , "");
     }
     if (text == "/humedad") {
       bot.sendMessage(chat_id, str_hum , "");
-    }
-
     }
 
     if (text == "/inicio") {
@@ -105,6 +103,7 @@ void setup() {
 }
 
 void loop() {
+
   if (millis() > Bot_lasttime + Bot_mtbs)  {
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
@@ -121,8 +120,8 @@ void loop() {
   delay(4000); // tiempo de espera entre lecturas
  
   
-    h = dht.readHumidity();
-    t = dht.readTemperature();
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
 
     if (isnan(h) || isnan(t)) {
         Serial.println("¡Error al leer del sensor DHT!");
@@ -133,15 +132,13 @@ void loop() {
     Serial.println(str_tem);
     str_hum = "Humedad : " + String(h, 2);
     Serial.println(str_hum);
-   }
- 
- 
+  
    Serial.print("La humedad es de: ");
    Serial.print(h);
    Serial.print(" %\t");
    Serial.print("La temperatura es de: ");
    Serial.print(t);
    Serial.print(" *C ");
-}
 
 }
+
