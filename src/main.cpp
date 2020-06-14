@@ -34,8 +34,10 @@ bool Start = false;
 const int DHTPin = D4;  // Pin donde esta conectado ( por defecto en nuestro proyecto esta conectado en el pin 4)
 DHT dht(DHTPin, DHTTYPE);
 
-String str_tem = "";
+String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
+
+//------------Configurar estados y respuestas del bot de telegram-----------------//
 
 void handleNewMessages(int numNewMessages) {
   Serial.println("handleNewMessages");
@@ -47,14 +49,13 @@ void handleNewMessages(int numNewMessages) {
 
     String from_name = bot.messages[i].from_name;
     if (from_name == "") from_name = "Guest";
-
-
-//--------------Configurar estados y respuestas del bot de telegram-----------------------//
-
-    // if (text == "/estado") {
-    //   bot.sendMessage(chat_id, str_tem , str_hum"");
-    // }
     
+
+
+    if (text == "/estado") {
+      bot.sendMessage(chat_id, str_tem, "");
+      bot.sendMessage(chat_id, str_hum , "");
+    }
     if (text == "/temperatura") {
       bot.sendMessage(chat_id, str_tem , "");
     }
@@ -72,7 +73,6 @@ void handleNewMessages(int numNewMessages) {
     }
   }
 }
-
 
 void setup() {
   Serial.begin(115200);
