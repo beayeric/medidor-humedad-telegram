@@ -14,10 +14,10 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
-char ssid[] = "nombre de la red";         		  // el nombre de su red SSID
-char password[] = "contraseña de la red";       // la contraseña de su red
+char ssid[] = "MOVISTAR_8002";         		  // el nombre de su red SSID
+char password[] = "MhPXue3fuhQGxHQcuNcE";       // la contraseña de su red
 
-#define TELEGRAM_BOT_TOKEN "token del bot de telegram"  // TOKEN proporcionado por BOTFATHER
+#define TELEGRAM_BOT_TOKEN "1214719176:AAFpskFrYxA66OVn4gf4dpwDRyqK2jpCCS4"  // TOKEN proporcionado por BOTFATHER
 
 //------- ---------------------- ------//
 
@@ -64,7 +64,7 @@ void handleNewMessages(int numNewMessages) {
     }
 
     if (text == "/inicio") {
-      String welcome = "Hola" + from_name + "esta es tu sale de control" ".\n";
+      String welcome = "Hola " + from_name + " esta es tu sale de control" ".\n";
       welcome += "Esta es una prueba de medidor de humedad y temperatura con bot de telegram.\n\n";
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
       welcome += "/temperatura : para saber el estado de la temperatura\n";
