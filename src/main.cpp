@@ -76,6 +76,7 @@ void handleNewMessages(int numNewMessages) {
 
 void setup() {
   Serial.begin(115200);
+  dht.begin();
 
   // Establezca WiFi en modo estación y desconéctese de un AP si era anteriormente estaba conectado
   WiFi.mode(WIFI_STA);
