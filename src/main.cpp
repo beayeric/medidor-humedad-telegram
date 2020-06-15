@@ -11,13 +11,14 @@
 #include "DHT.h" // Librería para el sensor  V1.3.4
 #include <Adafruit_Sensor.h> //Librería para la lectura del sensor V1.0.3
 
-
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
-char ssid[] = "xxx";         		  // el nombre de su red SSID
-char password[] = "xxxxxxx";       // la contraseña de su red
+char ssid[] = "xxxxx";         		  // el nombre de su red SSID
+char password[] = "xxxx";       // la contraseña de su red
 
-#define TELEGRAM_BOT_TOKEN "xxxxxxxx"  // TOKEN proporcionado por BOTFATHER
+#define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
+
+
 
 //------- ---------------------- ------//
 
@@ -34,8 +35,8 @@ bool Start = false;
 const int DHTPin = D4;  // Pin donde esta conectado ( por defecto en nuestro proyecto esta conectado en el pin 4)
 DHT dht(DHTPin, DHTTYPE);
 
-String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
-String str_hum = "";
+String str_tem = "" -4; // Declarar variables string globales para almacenar los valores de temperatura y humedad
+String str_hum = "" +12;
 
 //------------Configurar estados y respuestas del bot de telegram-----------------//
 
@@ -49,8 +50,16 @@ void handleNewMessages(int numNewMessages) {
 
     String from_name = bot.messages[i].from_name;
     if (from_name == "") from_name = "Guest";
-    
 
+
+    // intento de alarma por superar valores //
+    if (str_hum < "40") {
+      bot.sendMessage(chat_id, str_hum, "Alarma humedad minima");
+    }
+    if (str_hum > "60") {
+      bot.sendMessage(chat_id, str_hum, "Alarma humedad maxíma");
+    }
+    // ----------- //
 
     if (text == "/estado") {
       bot.sendMessage(chat_id, str_tem, "");
@@ -142,4 +151,3 @@ void loop() {
    Serial.print(" *C ");
 
 }
-
