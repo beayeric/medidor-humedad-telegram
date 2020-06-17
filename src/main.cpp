@@ -28,7 +28,8 @@ UniversalTelegramBot bot(TELEGRAM_BOT_TOKEN, client);
 int Bot_mtbs = 1000; // tiempo medio entre escaneo de mensajes
 long Bot_lasttime;   // la última vez que se realizó la exploración de mensajes
 bool Start = false;
-
+int dht_mtbs = 1000;
+long Bdht_lasttime;
 // ----------- Funciones de temperatura -----------//
 
 #define DHTTYPE DHT22   // TIPO DE SENSOR
@@ -52,15 +53,6 @@ void handleNewMessages(int numNewMessages) {
     if (from_name == "") from_name = "Guest";
 
 
-    // intento de alarma por superar valores //
-    if (str_hum < "40") {
-      bot.sendMessage(chat_id, str_hum, "Alarma humedad minima");
-    }
-    if (str_hum > "60") {
-      bot.sendMessage(chat_id, str_hum, "Alarma humedad maxíma");
-    }
-    // ----------- //
-
     if (text == "/estado") {
       bot.sendMessage(chat_id, str_tem, "");
       bot.sendMessage(chat_id, str_hum , "");
@@ -73,7 +65,7 @@ void handleNewMessages(int numNewMessages) {
     }
 
     if (text == "/inicio") {
-      String welcome = "Hola " + from_name + " esta es tu sale de control" ".\n";
+      String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
       welcome += "Esta es una prueba de medidor de humedad y temperatura con bot de telegram.\n\n";
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
       welcome += "/temperatura : para saber el estado de la temperatura\n";
