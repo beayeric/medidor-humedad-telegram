@@ -13,10 +13,11 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
-char ssid[] = "xxxxx";         		  // el nombre de su red SSID
+char ssid[] = "xxxxx";              // el nombre de su red SSID
 char password[] = "xxxx";       // la contraseña de su red
 
-#define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
+#define TELEGRAM_BOT_TOKEN "xxxxx "  // TOKEN proporcionado por BOTFATHER
+
 
 
 
@@ -25,19 +26,21 @@ char password[] = "xxxx";       // la contraseña de su red
 WiFiClientSecure client;
 UniversalTelegramBot bot(TELEGRAM_BOT_TOKEN, client);
 
-int Bot_mtbs = 1000; // tiempo medio entre escaneo de mensajes
+int Bot_mtbs = 1000;  // tiempo medio entre escaneo de mensajes
 long Bot_lasttime;   // la última vez que se realizó la exploración de mensajes
+int dht_mtbs = 1000; // tiempo entre lecturas.
+long hBdt_lasttime;  // la última vez que se realizó la exploración de mensajes
 bool Start = false;
-int dht_mtbs = 1000;
-long Bdht_lasttime;
+
+
 // ----------- Funciones de temperatura -----------//
 
 #define DHTTYPE DHT22   // TIPO DE SENSOR
 const int DHTPin = D4;  // Pin donde esta conectado ( por defecto en nuestro proyecto esta conectado en el pin 4)
 DHT dht(DHTPin, DHTTYPE);
 
-String str_tem = "" -4; // Declarar variables string globales para almacenar los valores de temperatura y humedad
-String str_hum = "" +12;
+String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
+String str_hum = "";
 
 //------------Configurar estados y respuestas del bot de telegram-----------------//
 
@@ -119,7 +122,7 @@ void loop() {
   }
 
 // ----- funciones para medir con el sensor ---//
-  delay(4000); // tiempo de espera entre lecturas
+  /// delay(4000); // tiempo de espera entre lecturas
  
   
     float h = dht.readHumidity();
@@ -129,11 +132,18 @@ void loop() {
         Serial.println("¡Error al leer del sensor DHT!");
         return;
     }
-    // Creo los string en variables globales para tener acceso en todo el programa 
+
+    if (millis() > hBdt_lasttime + dht_mtbs)  {
+   
     str_tem = "Temperatura : " + String(t, 2);   
     Serial.println(str_tem);
     str_hum = "Humedad : " + String(h, 2);
     Serial.println(str_hum);
+
+    hBdt_lasttime = millis();
+  }
+  
+    
   
    Serial.print("La humedad es de: ");
    Serial.print(h);
