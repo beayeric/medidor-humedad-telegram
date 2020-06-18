@@ -24,7 +24,7 @@ UniversalTelegramBot bot(TELEGRAM_BOT_TOKEN, client);
 
 int Bot_mtbs = 1000;  // tiempo medio entre escaneo de mensajes
 long Bot_lasttime;   // la última vez que se realizó la exploración de mensajes
-int dht_mtbs = 1000; // tiempo entre lecturas.
+int dht_mtbs = 4000; // tiempo entre lecturas.
 long hBdt_lasttime;  // la última vez que se realizó la exploración de mensajes
 bool Start = false;
 
