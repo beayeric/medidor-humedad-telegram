@@ -124,13 +124,12 @@ void loop() {
     float h = dht.readHumidity();
     float t = dht.readTemperature();
 
-    if (isnan(h) || isnan(t)) {
-        Serial.println("¡Error al leer del sensor DHT!");
-        return;
-    }
+    
 
     if (millis() > hBdt_lasttime + dht_mtbs)  {
    
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
     str_tem = "Temperatura : " + String(t, 2);   
     Serial.println(str_tem);
     str_hum = "Humedad : " + String(h, 2);
@@ -139,6 +138,10 @@ void loop() {
     hBdt_lasttime = millis();
   }
   
+  if (isnan(h) || isnan(t)) {
+        Serial.println("¡Error al leer del sensor DHT!");
+        return;
+    }
    Serial.print("La humedad es de: ");
    Serial.print(h);
    Serial.print(" %\t");
