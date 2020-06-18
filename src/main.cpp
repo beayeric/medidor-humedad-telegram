@@ -13,14 +13,10 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
-char ssid[] = "xxxxx";              // el nombre de su red SSID
+char ssid[] = "xxxxxxx";              // el nombre de su red SSID
 char password[] = "xxxx";       // la contraseña de su red
 
 #define TELEGRAM_BOT_TOKEN "xxxxx "  // TOKEN proporcionado por BOTFATHER
-
-
-
-
 //------- ---------------------- ------//
 
 WiFiClientSecure client;
@@ -142,8 +138,6 @@ void loop() {
 
     hBdt_lasttime = millis();
   }
-  
-    
   
    Serial.print("La humedad es de: ");
    Serial.print(h);
