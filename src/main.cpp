@@ -13,10 +13,12 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
-char ssid[] = "xxxxxxx";              // el nombre de su red SSID
+char ssid[] = "xxxxx";              // el nombre de su red SSID
 char password[] = "xxxx";       // la contraseña de su red
 
-#define TELEGRAM_BOT_TOKEN "xxxxx "  // TOKEN proporcionado por BOTFATHER
+#define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
+
+
 //------- ---------------------- ------//
 
 WiFiClientSecure client;
@@ -24,7 +26,7 @@ UniversalTelegramBot bot(TELEGRAM_BOT_TOKEN, client);
 
 int Bot_mtbs = 1000;  // tiempo medio entre escaneo de mensajes
 long Bot_lasttime;   // la última vez que se realizó la exploración de mensajes
-int dht_mtbs = 4000; // tiempo entre lecturas.
+int dht_mtbs = 1000; // tiempo entre lecturas.
 long hBdt_lasttime;  // la última vez que se realizó la exploración de mensajes
 bool Start = false;
 
@@ -52,9 +54,12 @@ void handleNewMessages(int numNewMessages) {
     if (from_name == "") from_name = "Guest";
 
 
-    if (text == "/estado") {
-      bot.sendMessage(chat_id, str_tem, "");
-      bot.sendMessage(chat_id, str_hum , "");
+    if (text == "/estado") { 
+      String resultado = str_hum +"\n";
+      resultado += str_tem +"\n";
+      bot.sendMessage(chat_id, resultado, "");
+      
+      
     }
     if (text == "/temperatura") {
       bot.sendMessage(chat_id, str_tem , "");
@@ -121,32 +126,30 @@ void loop() {
   /// delay(4000); // tiempo de espera entre lecturas
  
   
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
-
-    
-
     if (millis() > hBdt_lasttime + dht_mtbs)  {
-   
+    
     float h = dht.readHumidity();
     float t = dht.readTemperature();
+
+    if (isnan(h) || isnan(t)) {
+        Serial.println("¡Error al leer del sensor DHT!");
+        return;
+    }
+
+   
     str_tem = "Temperatura : " + String(t, 2);   
     Serial.println(str_tem);
     str_hum = "Humedad : " + String(h, 2);
     Serial.println(str_hum);
 
-    hBdt_lasttime = millis();
-  }
   
-  if (isnan(h) || isnan(t)) {
-        Serial.println("¡Error al leer del sensor DHT!");
-        return;
-    }
-   Serial.print("La humedad es de: ");
    Serial.print(h);
-   Serial.print(" %\t");
-   Serial.print("La temperatura es de: ");
    Serial.print(t);
-   Serial.print(" *C ");
+  
 
+    hBdt_lasttime = millis();
+
+  }
 }
+
+    
