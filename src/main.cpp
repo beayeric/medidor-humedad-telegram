@@ -70,12 +70,67 @@ void handleNewMessages(int numNewMessages) {
       bot.sendMessage(chat_id, str_hum , "");
     }
 
+    if (text ==("/alarma_T_")) {
+        for (byte j = 0; j < authNumber; j++) {
+          if (chat_id == auth[j].id) {
+            if (text.substring(9) != "") {
+              auth[j].TT = text.substring(9).toFloat();
+              if (auth[j].TT > temperature[1]) {
+                auth[j].TD = 2;
+                msg = "Te avisaré cuando la temperatura suepre:\n";
+              } else {
+                auth[j].TD = 1;
+                msg = "Te avisaré cuando la temperatura este por debajo de:\n";
+              }
+              msg += String(auth[j].TT) + " °C";
+              bot->sendMessage(chat_id, msg, "");
+            } else {
+              auth[j].TD = 0;
+              msg = "Alarma desactivada";
+              bot->sendMessage(chat_id, msg, "");
+            }
+            EEPROM.put(100 + (42 * j) + 17, auth[j].TT);
+            EEPROM.put(100 + (42 * j) + 21, auth[j].TD);
+            EEPROM.commit();
+            j = authNumber;
+          }
+        }
+      }
+      if (text ==("/alarma_RH_")) {
+        for (byte j = 0; j < authNumber; j++) {
+          if (chat_id == auth[j].id) {
+            if (text.substring(10) != "") {
+              auth[j].RHT = text.substring(10).toFloat();
+              if (auth[j].RHT > humidity[1]) {
+                auth[j].RHD = 2;
+                msg = "Te avisaré cuando la humedad suepre:\n";
+              } else {
+                auth[j].RHD = 1;
+                msg = "Te avisaré cuando la humedad este por debajo de:\n";
+              }
+              msg += String(auth[j].RHT) + " RH%";
+              bot->sendMessage(chat_id, msg, "");
+            } else {
+              auth[j].RHD = 0;
+              msg = "Alarm deactivated";
+              bot->sendMessage(chat_id, msg, "");
+            }
+            EEPROM.put(100 + (42 * j) + 22, auth[j].RHT);
+            EEPROM.put(100 + (42 * j) + 26, auth[j].RHD);
+            EEPROM.commit();
+            j = authNumber;
+          }
+        }
+      }
+
     if (text == "/inicio") {
       String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
       welcome += "Esta es una prueba de medidor de humedad y temperatura con bot de telegram.\n\n";
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
       welcome += "/temperatura : para saber el estado de la temperatura\n";
       welcome += "/estado : para saber estado de la humedad y la temperatura al mismo tiempo\n";
+      welcome += "/alarma_T_ : Temperature\n";
+      welcome += "/alarma_RH_ : Humidity\n";
       bot.sendMessage(chat_id, welcome, "Markdown");
     }
   }
@@ -83,6 +138,7 @@ void handleNewMessages(int numNewMessages) {
 
 void setup() {
   Serial.begin(115200);
+  EEPROM.begin(768);
   dht.begin();
 
   // Establezca WiFi en modo estación y desconéctese de un AP si era anteriormente estaba conectado
