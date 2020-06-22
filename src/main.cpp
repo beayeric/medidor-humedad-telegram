@@ -3,6 +3,7 @@
  * desde un bot de telegram.
  * */
 
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
@@ -122,9 +123,6 @@ void loop() {
     Bot_lasttime = millis();
   }
 
-// ----- funciones para medir con el sensor ---//
-  /// delay(4000); // tiempo de espera entre lecturas
- 
   
     if (millis() > hBdt_lasttime + dht_mtbs)  {
     
