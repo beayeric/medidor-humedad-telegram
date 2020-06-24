@@ -23,7 +23,9 @@ char password[] = "xxxx";       // la contraseña de su red
 
 //------- ---------------------- ------//
 
-const byte authNumber = 10 // variable EEPROM
+const byte authNumber = 10 // variable EEPROM ?
+const int maxaddr = 0x4A; // tamaño que tiene? 
+
 
 //------- ---------------------- ------//
 
@@ -73,7 +75,13 @@ void handleNewMessages(int numNewMessages) {
     String from_name = bot.messages[i].from_name;
     if (from_name == "") from_name = "Guest";
 
+    if (text == "/admin_xxxx") {
+        //add chat_id to conf.auth_ids
+        for (byte j = 0; j < authNumber; j++) {
+          if (auth[j].id == "") {
+            auth[j].id = chat_id;
 
+            
     if (text == "/estado") { 
       String resultado = str_hum +"\n";
       resultado += str_tem +"\n";
