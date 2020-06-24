@@ -81,7 +81,7 @@ void handleNewMessages(int numNewMessages) {
           if (auth[j].id == "") {
             auth[j].id = chat_id;
 
-            
+
     if (text == "/estado") { 
       String resultado = str_hum +"\n";
       resultado += str_tem +"\n";
@@ -115,7 +115,7 @@ void handleNewMessages(int numNewMessages) {
               msg = "Alarma desactivada";
               bot->sendMessage(chat_id, msg, "");
             }
-            EEPROM.put(100 + (42 * j) + 17, auth[j].t);
+            EEPROM.put(100 + (42 * j) + 17, auth[j].t); // se guardan los valores en EEPROM
             EEPROM.put(100 + (42 * j) + 21, auth[j].td);
             EEPROM.commit();
             j = authNumber;
@@ -141,7 +141,7 @@ void handleNewMessages(int numNewMessages) {
               msg = "Alarm deactivated";
               bot->sendMessage(chat_id, msg, "");
             }
-            EEPROM.put(100 + (42 * j) + 22, auth[j].h);
+            EEPROM.put(100 + (42 * j) + 22, auth[j].h); // guarda los vamores en EEPROM
             EEPROM.put(100 + (42 * j) + 26, auth[j].hd);
             EEPROM.commit();
             j = authNumber;
