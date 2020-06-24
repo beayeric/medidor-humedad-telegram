@@ -92,23 +92,23 @@ void handleNewMessages(int numNewMessages) {
         for (byte j = 0; j < authNumber; j++) {
           if (chat_id == auth[j].id) {
             if (text.substring(9) != "") {
-              auth[j].TT = text.substring(9).toFloat();
-              if (auth[j].TT > temperature[1]) {
-                auth[j].TD = 2;
+              auth[j].t = text.substring(9).toFloat();
+              if (auth[j].t > temperature[1]) {
+                auth[j].td = 2;
                 msg = "Te avisaré cuando la temperatura suepre:\n";
               } else {
-                auth[j].TD = 1;
+                auth[j].td = 1;
                 msg = "Te avisaré cuando la temperatura este por debajo de:\n";
               }
-              msg += String(auth[j].TT) + " °C";
+              msg += String(auth[j].t) + " °C";
               bot->sendMessage(chat_id, msg, "");
             } else {
-              auth[j].TD = 0;
+              auth[j].td = 0;
               msg = "Alarma desactivada";
               bot->sendMessage(chat_id, msg, "");
             }
-            EEPROM.put(100 + (42 * j) + 17, auth[j].TT);
-            EEPROM.put(100 + (42 * j) + 21, auth[j].TD);
+            EEPROM.put(100 + (42 * j) + 17, auth[j].t);
+            EEPROM.put(100 + (42 * j) + 21, auth[j].td);
             EEPROM.commit();
             j = authNumber;
           }
@@ -118,23 +118,23 @@ void handleNewMessages(int numNewMessages) {
         for (byte j = 0; j < authNumber; j++) {
           if (chat_id == auth[j].id) {
             if (text.substring(10) != "") {
-              auth[j].RHT = text.substring(10).toFloat();
-              if (auth[j].RHT > humidity[1]) {
-                auth[j].RHD = 2;
+              auth[j].h = text.substring(10).toFloat();
+              if (auth[j].h > humidity[1]) {
+                auth[j].hd = 2;
                 msg = "Te avisaré cuando la humedad suepre:\n";
               } else {
-                auth[j].RHD = 1;
+                auth[j].hd = 1;
                 msg = "Te avisaré cuando la humedad este por debajo de:\n";
               }
-              msg += String(auth[j].RHT) + " RH%";
+              msg += String(auth[j].h) + " RH%";
               bot->sendMessage(chat_id, msg, "");
             } else {
-              auth[j].RHD = 0;
+              auth[j].hd = 0;
               msg = "Alarm deactivated";
               bot->sendMessage(chat_id, msg, "");
             }
-            EEPROM.put(100 + (42 * j) + 22, auth[j].RHT);
-            EEPROM.put(100 + (42 * j) + 26, auth[j].RHD);
+            EEPROM.put(100 + (42 * j) + 22, auth[j].h);
+            EEPROM.put(100 + (42 * j) + 26, auth[j].hd);
             EEPROM.commit();
             j = authNumber;
           }
