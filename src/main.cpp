@@ -23,6 +23,10 @@ char password[] = "xxxx";       // la contraseña de su red
 
 //------- ---------------------- ------//
 
+const byte authNumber = 10 // variable EEPROM
+
+//------- ---------------------- ------//
+
 WiFiClientSecure client;
 UniversalTelegramBot bot(TELEGRAM_BOT_TOKEN, client);
 
@@ -42,6 +46,20 @@ DHT dht(DHTPin, DHTTYPE);
 String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
 
+
+//------- ---------------------- ------//
+
+//user struct. "id" is loaded from eeprom
+struct authObj {
+  String id;
+  float h;  //temperature threshold
+  byte hd; //direction of thershold; 0: off; 1: if temp<TT; 2: if temp>TT
+  float h;
+  byte hd;
+  
+};
+authObj auth[authNumber];  //id: 52bit (arduino max 32bit) -> string ;_; (max 16 chars) = 170 bytes
+ 
 //------------Configurar estados y respuestas del bot de telegram-----------------//
 
 void handleNewMessages(int numNewMessages) {
