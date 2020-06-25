@@ -5,7 +5,6 @@
 
 
 #include <Arduino.h>
-#include <EEPROM.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h> //Incluimos la librería para  Telegram  - https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
@@ -19,12 +18,6 @@ char ssid[] = "xxxxx";              // el nombre de su red SSID
 char password[] = "xxxx";       // la contraseña de su red
 
 #define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
-
-
-//------- ---------------------- ------//
-
-const byte authNumber = 10 // variable EEPROM ?
-const int maxaddr = 0x4A; // tamaño que tiene? 
 
 
 //------- ---------------------- ------//
@@ -48,19 +41,6 @@ DHT dht(DHTPin, DHTTYPE);
 String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
 
-
-//------- ---------------------- ------//
-
-//user struct. "id" is loaded from eeprom
-struct authObj {
-  String id;
-  float h;  //temperature threshold
-  byte hd; //direction of thershold; 0: off; 1: if temp<TT; 2: if temp>TT
-  float h;
-  byte hd;
-  
-};
-authObj auth[authNumber];  //id: 52bit (arduino max 32bit) -> string ;_; (max 16 chars) = 170 bytes
  
 //------------Configurar estados y respuestas del bot de telegram-----------------//
 
@@ -75,11 +55,6 @@ void handleNewMessages(int numNewMessages) {
     String from_name = bot.messages[i].from_name;
     if (from_name == "") from_name = "Guest";
 
-    if (text == "/admin_xxxx") {
-        //add chat_id to conf.auth_ids
-        for (byte j = 0; j < authNumber; j++) {
-          if (auth[j].id == "") {
-            auth[j].id = chat_id;
 
 
     if (text == "/estado") { 
@@ -96,67 +71,13 @@ void handleNewMessages(int numNewMessages) {
       bot.sendMessage(chat_id, str_hum , "");
     }
 
-    if (text ==("/alarma_T_")) {
-        for (byte j = 0; j < authNumber; j++) {
-          if (chat_id == auth[j].id) {
-            if (text.substring(9) != "") {
-              auth[j].t = text.substring(9).toFloat();
-              if (auth[j].t > temperature[1]) {
-                auth[j].td = 2;
-                msg = "Te avisaré cuando la temperatura suepre:\n";
-              } else {
-                auth[j].td = 1;
-                msg = "Te avisaré cuando la temperatura este por debajo de:\n";
-              }
-              msg += String(auth[j].t) + " °C";
-              bot->sendMessage(chat_id, msg, "");
-            } else {
-              auth[j].td = 0;
-              msg = "Alarma desactivada";
-              bot->sendMessage(chat_id, msg, "");
-            }
-            EEPROM.put(100 + (42 * j) + 17, auth[j].t); // se guardan los valores en EEPROM
-            EEPROM.put(100 + (42 * j) + 21, auth[j].td);
-            EEPROM.commit();
-            j = authNumber;
-          }
-        }
-      }
-      if (text ==("/alarma_RH_")) {
-        for (byte j = 0; j < authNumber; j++) {
-          if (chat_id == auth[j].id) {
-            if (text.substring(10) != "") {
-              auth[j].h = text.substring(10).toFloat();
-              if (auth[j].h > humidity[1]) {
-                auth[j].hd = 2;
-                msg = "Te avisaré cuando la humedad suepre:\n";
-              } else {
-                auth[j].hd = 1;
-                msg = "Te avisaré cuando la humedad este por debajo de:\n";
-              }
-              msg += String(auth[j].h) + " RH%";
-              bot->sendMessage(chat_id, msg, "");
-            } else {
-              auth[j].hd = 0;
-              msg = "Alarm deactivated";
-              bot->sendMessage(chat_id, msg, "");
-            }
-            EEPROM.put(100 + (42 * j) + 22, auth[j].h); // guarda los vamores en EEPROM
-            EEPROM.put(100 + (42 * j) + 26, auth[j].hd);
-            EEPROM.commit();
-            j = authNumber;
-          }
-        }
-      }
-
+    
     if (text == "/inicio") {
       String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
       welcome += "Esta es una prueba de medidor de humedad y temperatura con bot de telegram.\n\n";
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
       welcome += "/temperatura : para saber el estado de la temperatura\n";
       welcome += "/estado : para saber estado de la humedad y la temperatura al mismo tiempo\n";
-      welcome += "/alarma_T_ : Temperature\n";
-      welcome += "/alarma_RH_ : Humidity\n";
       bot.sendMessage(chat_id, welcome, "Markdown");
     }
   }
@@ -164,7 +85,6 @@ void handleNewMessages(int numNewMessages) {
 
 void setup() {
   Serial.begin(115200);
-  EEPROM.begin(768);
   dht.begin();
 
   // Establezca WiFi en modo estación y desconéctese de un AP si era anteriormente estaba conectado
@@ -227,8 +147,7 @@ void loop() {
    Serial.print(h);
    Serial.print(t);
   
-
-    hBdt_lasttime = millis();
+  hBdt_lasttime = millis();
 
   }
 }
