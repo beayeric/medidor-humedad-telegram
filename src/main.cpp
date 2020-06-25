@@ -1,8 +1,17 @@
-/**
- * Primeras pruebas de intento de lectura de la temperatura y humedad desde WeMos D1 Mini 
- * desde un bot de telegram.
- * */
+/*
+  Autor:   makers bierzo
+  Fecha:     06/2020
+  
+  Version:  V0.0.1
+ 
+  Descripcion:
+  Lectura de humedad y temperatura con dht22 y wemos d1 mini. Consulta mediante bot de telegram
+ 
+  Pinde de conexión del dht22:
+  D4
+ 
 
+*/
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -44,6 +53,8 @@ String str_hum = "";
  
 //------------Configurar estados y respuestas del bot de telegram-----------------//
 
+
+ // -- parte fija , no necesita modificaciones -- //
 void handleNewMessages(int numNewMessages) {
   Serial.println("handleNewMessages");
   Serial.println(String(numNewMessages));
@@ -55,7 +66,7 @@ void handleNewMessages(int numNewMessages) {
     String from_name = bot.messages[i].from_name;
     if (from_name == "") from_name = "Guest";
 
-
+// --- comienza la parte que se puede personalizar -- //
 
     if (text == "/estado") { 
       String resultado = str_hum +"\n";
@@ -101,7 +112,7 @@ void setup() {
     Serial.print(".");
     delay(500);
   }
-
+// -- valores que se muestran en el monitor serie --//
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.print("IP address: ");
