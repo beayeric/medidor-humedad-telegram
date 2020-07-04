@@ -28,7 +28,7 @@ char ssid[] = "xxxxx";              // el nombre de su red SSID
 char password[] = "xxxx";       // la contraseña de su red
 
 #define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
-#define CHAT_ID_PROPIO “ xxx ”
+#define CHAT_ID_PROPIO “xxx”
 
 //------- ---------------------- ------//
 
@@ -50,8 +50,8 @@ DHT dht(DHTPin, DHTTYPE);
 
 String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
-int h = dht.readHumidity(); // Variable para la lecutra de la humedad
-int t = dht.readTemperature(); // Varíable para la lectura de la temperatura
+float h = dht.readHumidity(); // Variable para la lecutra de la humedad
+float t = dht.readTemperature(); // Varíable para la lectura de la temperatura
 bool Alar_Hum = ""; // Variables para la humedad actual
 bool Alar_Tem = ""; // Variables para la temperatura actural
 
@@ -96,6 +96,8 @@ void handleNewMessages(int numNewMessages) {
     if (text == "/humedad") {
       bot.sendMessage(chat_id, str_hum , "");
     }
+
+    
 
     if (text == "/start") {
       String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
@@ -164,8 +166,8 @@ void loop() {
   // Cada tiempo definido en dht_mtbs leemos el sensor de temperatura/humedad
   if (millis() > hBdt_lasttime + dht_mtbs)  {
     
-    float h = dht.readHumidity(); // Variable para la lecutra de la humedad
-    float t = dht.readTemperature(); // Varíable para la lectura de la temperatura
+    h = dht.readHumidity(); // Variable para la lecutra de la humedad
+    t = dht.readTemperature(); // Varíable para la lectura de la temperatura
 
     if (isnan(h) || isnan(t)) {
         Serial.println("¡Error al leer del sensor DHT!");
