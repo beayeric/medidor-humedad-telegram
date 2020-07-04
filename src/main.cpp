@@ -1,5 +1,5 @@
 /*
-  Autor:   makers bierzo
+  Autor:   Makers Bierzo
   Fecha:     06/2020
   
   Version:  V0.0.1
@@ -22,10 +22,12 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
-char ssid[] = "xxxxx";              // el nombre de su red SSID
-char password[] = "xxxx";       // la contraseña de su red
+char ssid[] = "MOVISTAR_8002";              // el nombre de su red SSID
+char password[] = "MhPXue3fuhQGxHQcuNcE";       // la contraseña de su red
 
-#define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
+
+#define TELEGRAM_BOT_TOKEN "1214719176:AAFpskFrYxA66OVn4gf4dpwDRyqK2jpCCS4"  // TOKEN proporcionado por BOTFATHER
+#define CHAT_ID_PROPIO "644092158"
 
 //------- ---------------------- ------//
 
@@ -47,12 +49,25 @@ DHT dht(DHTPin, DHTTYPE);
 
 String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
+float h = dht.readHumidity(); // Variable para la lecutra de la humedad
+float t = dht.readTemperature(); // Varíable para la lectura de la temperatura
+bool Alar_Hum = ""; // Variables para la humedad actual
+bool Alar_Tem = ""; // Variables para la temperatura actural
+
+// Limites máximos y minimos de temperatura y humedad --// 
+float HumMax = 50;
+float HumMin = 45;
+float TemMax = 20;
+float TemMin = 19;
+
+
+
 
  
 //------------Configurar estados y respuestas del bot de telegram-----------------//
 
 
- // -- parte fija , no necesita modificaciones -- //
+ // -- Parte fija , no necesita modificaciones -- //
 void handleNewMessages(int numNewMessages) {
   Serial.println("handleNewMessages");
   Serial.println(String(numNewMessages));
@@ -111,7 +126,7 @@ void setup() {
     delay(500);
   }
   
-  // -- valores que se muestran en el monitor serie --//
+  // -- Valores que se muestran en el monitor serie --//
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.print("IP address: ");
@@ -130,6 +145,23 @@ void setup() {
 
 void loop() {
 
+//--funcion de alarma --//
+
+
+if (Alar_Hum){
+
+  if (h>HumMax) {
+    String Alar_HumMax = "Superada la humedad MÁXIMA" "\n";
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
+}
+
+  else if (h<HumMin) { 
+    String Alar_HumMin = "Superada la humedad MINIMA" "\n";
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
+}
+ Alar_Hum = false;
+}
+
   // Cada tiempo definido en Bot_mtbs vemos si se recibe algún mensaje
   if (millis() > Bot_lasttime + Bot_mtbs)  {
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
@@ -146,8 +178,7 @@ void loop() {
   // Cada tiempo definido en dht_mtbs leemos el sensor de temperatura/humedad
   if (millis() > hBdt_lasttime + dht_mtbs)  {
     
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
+    
 
     if (isnan(h) || isnan(t)) {
         Serial.println("¡Error al leer del sensor DHT!");
