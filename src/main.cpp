@@ -24,12 +24,11 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
 
-char ssid[] = "MOVISTAR_8002";              // el nombre de su red SSID
-char password[] = "MhPXue3fuhQGxHQcuNcE";       // la contraseña de su red
+char ssid[] = "xxxxx";              // el nombre de su red SSID
+char password[] = "xxxx";       // la contraseña de su red
 
-
-#define TELEGRAM_BOT_TOKEN "1214719176:AAFpskFrYxA66OVn4gf4dpwDRyqK2jpCCS4"  // TOKEN proporcionado por BOTFATHER
-#define CHAT_ID_PROPIO "644092158"
+#define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
+#define CHAT_ID_PROPIO "xxxx"
 
 //------- ---------------------- ------//
 
