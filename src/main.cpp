@@ -2,7 +2,9 @@
   Autor:   Makers Bierzo
   Fecha:     06/2020
   
-  Version:  V0.0.1
+  Version:  V0.0.1 
+
+  Prueba versión v0.02 ( alarma)
  
   Descripcion:
   Lectura de humedad y temperatura con dht22 y wemos d1 mini. Consulta mediante bot de telegram
