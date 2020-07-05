@@ -50,10 +50,10 @@ DHT dht(DHTPin, DHTTYPE);
 
 String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
-float h = dht.readHumidity(); // Variable para la lecutra de la humedad
-float t = dht.readTemperature(); // Varíable para la lectura de la temperatura
-bool Alar_Hum = ""; // Variables para la humedad actual
-bool Alar_Tem = ""; // Variables para la temperatura actural
+float h = 0.0; // Variable para la lecutra de la humedad
+float t = 0.0; // Varíable para la lectura de la temperatura
+bool Alar_Hum = true; // Variables para la humedad actual
+bool Alar_Tem = true; // Variables para la temperatura actural
 
 // Limites máximos y minimos de temperatura y humedad --// 
 float HumMax = 50;
@@ -95,6 +95,7 @@ void handleNewMessages(int numNewMessages) {
 
     if (text == "/humedad") {
       bot.sendMessage(chat_id, str_hum , "");
+    
     }
 
     
@@ -105,6 +106,8 @@ void handleNewMessages(int numNewMessages) {
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
       welcome += "/temperatura : para saber el estado de la temperatura\n";
       welcome += "/estado : para saber estado de la humedad y la temperatura al mismo tiempo\n";
+      welcome += "/alarma : los humbrales de humedad y temperatura son\n";
+
       bot.sendMessage(chat_id, welcome, "Markdown");
     }
   }
@@ -189,15 +192,15 @@ if (Alar_Hum){
   if (h>=HumMax) {
     String Alar_HumMax = "Superada la humedad MÁXIMA" "\n";
     bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
+    Alar_Hum = false;
 }
 
   else if (h<=HumMin) { 
     String Alar_HumMin = "Superada la humedad MINIMA" "\n";
     bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
+    Alar_Hum = false;
 }
- Alar_Hum = false;
 }
 }
-
 
     
