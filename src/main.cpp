@@ -29,7 +29,6 @@ char password[] = "xxxx";       // la contraseña de su red
 
 #define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
 #define CHAT_ID_PROPIO “xxx”
-
 //------- ---------------------- ------//
 
 WiFiClientSecure client;
@@ -50,16 +49,28 @@ DHT dht(DHTPin, DHTTYPE);
 
 String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
-float h = 0.0; // Variable para la lecutra de la humedad
-float t = 0.0; // Varíable para la lectura de la temperatura
-bool Alar_Hum = true; // Variables para la humedad actual
-bool Alar_Tem = true; // Variables para la temperatura actural
+
+String Alarma_Hum_Maxima = "" ;
+String Alarma_Hum_Minima = "" ;
+
+float h; // Variable para la lecutra de la humedad
+float t; // Varíable para la lectura de la temperatura
+
+bool Alar_Hum_Max = true; // 
+bool Alar_Hum_Min = true;
+
+bool Alar_Tem_Max = true; //
+bool Alar_Tem_Min = true;
+
+
 
 // Limites máximos y minimos de temperatura y humedad --// 
-float HumMax = 50;
-float HumMin = 45;
-float TemMax = 20;
-float TemMin = 19;
+
+float HumMax = 46.0;
+float HumMin = 45.0;
+
+float TemMax = 20.0;
+float TemMin = 19.0;
 
 
 
@@ -99,6 +110,11 @@ void handleNewMessages(int numNewMessages) {
     }
 
     
+   if (text == "/alarma") { 
+      String alarma = Alarma_Hum_Maxima +"\n";
+      alarma += Alarma_Hum_Minima +"\n";
+      bot.sendMessage(chat_id, alarma, "");
+    }
 
     if (text == "/start") {
       String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
@@ -183,22 +199,34 @@ void loop() {
     Serial.println(str_hum);
     
     hBdt_lasttime = millis();
+
+    Alarma_Hum_Maxima = "La Humedad Maxima es :" + String (HumMax, 2);
+    Serial.println(Alar_Tem_Max);
+    Alarma_Hum_Minima = "La Humedad minima es :" + String (HumMin, 2);
+    Serial.println(Alar_Tem_Min);
+
+
   }
 //--funcion de alarma --//
 
 
-if (Alar_Hum){
+    
+
+if (Alar_Hum_Max){
 
   if (h>=HumMax) {
     String Alar_HumMax = "Superada la humedad MÁXIMA" "\n";
     bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
-    Alar_Hum = false;
+    Alar_Hum_Max = false;
+  }
 }
 
-  else if (h<=HumMin) { 
+if (Alar_Hum_Min){
+
+  if (h<=HumMin) { 
     String Alar_HumMin = "Superada la humedad MINIMA" "\n";
     bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
-    Alar_Hum = false;
+    Alar_Hum_Min = false;
 }
 }
 }
