@@ -29,6 +29,7 @@ char password[] = "xxxx";       // la contraseña de su red
 
 #define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
 #define CHAT_ID_PROPIO “xxx”
+
 //------- ---------------------- ------//
 
 WiFiClientSecure client;
@@ -53,8 +54,8 @@ String str_hum = "";
 String Alarma_Hum_Maxima = "" ;
 String Alarma_Hum_Minima = "" ;
 
-float h; // Variable para la lecutra de la humedad
-float t; // Varíable para la lectura de la temperatura
+float h=0.0; // Variable para la lecutra de la humedad
+float t=0.0; // Varíable para la lectura de la temperatura
 
 bool Alar_Hum_Max = true; // 
 bool Alar_Hum_Min = true;
@@ -122,7 +123,7 @@ void handleNewMessages(int numNewMessages) {
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
       welcome += "/temperatura : para saber el estado de la temperatura\n";
       welcome += "/estado : para saber estado de la humedad y la temperatura al mismo tiempo\n";
-      welcome += "/alarma : los humbrales de humedad y temperatura son\n";
+      welcome += "/alarma : para saber los umbrales de humedad y temperatura\n";
 
       bot.sendMessage(chat_id, welcome, "Markdown");
     }
@@ -200,9 +201,9 @@ void loop() {
     
     hBdt_lasttime = millis();
 
-    Alarma_Hum_Maxima = "La Humedad Maxima es :" + String (HumMax, 2);
+    Alarma_Hum_Maxima = "La Humedad máxima es :" + String (HumMax, 2);
     Serial.println(Alar_Tem_Max);
-    Alarma_Hum_Minima = "La Humedad minima es :" + String (HumMin, 2);
+    Alarma_Hum_Minima = "La Humedad mínima es :" + String (HumMin, 2);
     Serial.println(Alar_Tem_Min);
 
 
@@ -220,6 +221,7 @@ if (Alar_Hum_Max){
     Alar_Hum_Max = false;
   }
 }
+
 
 if (Alar_Hum_Min){
 
