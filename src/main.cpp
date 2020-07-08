@@ -4,7 +4,7 @@
   
   Version:  V0.0.1 
 
-  Prueba versión v0.02 ( alarma)
+  Prueba versión v0.02 (alarma)
  
   Descripcion:
   Lectura de humedad y temperatura con dht22 y wemos d1 mini. Consulta mediante bot de telegram
@@ -50,6 +50,9 @@ DHT dht(DHTPin, DHTTYPE);
 
 String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
+
+String Hum_Actual = "La humedad actual es: ";
+String Temp_Actual = "La temperatura actual es: ";
 
 String Alarma_Hum_Maxima = "" ;
 String Alarma_Hum_Minima = "" ;
@@ -193,13 +196,15 @@ void loop() {
         Serial.println("¡Error al leer del sensor DHT!");
         return;
     }
-
+    // -- Conversión a String para mostrar los valores de la temperatura -- //
     str_tem = "Temperatura : " + String(t, 2);   
     Serial.println(str_tem);
     str_hum = "Humedad : " + String(h, 2);
     Serial.println(str_hum);
     
     hBdt_lasttime = millis();
+
+    // --- Conversión a String para mostras los valores de las alarmas --//
 
     Alarma_Hum_Maxima = "La Humedad máxima es :" + String (HumMax, 2);
     Serial.println(Alar_Tem_Max);
@@ -208,7 +213,8 @@ void loop() {
 
 
   }
-//--funcion de alarma --//
+
+//--Funcion de alarma --//
 
 
     
@@ -217,20 +223,42 @@ if (Alar_Hum_Max){
 
   if (h>=HumMax) {
     String Alar_HumMax = "Superada la humedad MÁXIMA" "\n";
+    Alar_HumMax += Hum_Actual + String(h,2);
     bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
     Alar_Hum_Max = false;
   }
 }
 
-
 if (Alar_Hum_Min){
 
   if (h<=HumMin) { 
     String Alar_HumMin = "Superada la humedad MINIMA" "\n";
+    Alar_HumMin += Hum_Actual + String(h,2);
     bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
     Alar_Hum_Min = false;
+  }
 }
+
+if (Alar_Tem_Max){
+
+  if (h>=TemMax) {
+    String Alar_Tem_Max = "Superada la temperatura Máxima" "\n";
+    Alar_Tem_Max += Temp_Actual + String(t,2);
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Max, "");
+    Alar_Hum_Max = false;
+  }
 }
+
+if (Alar_Tem_Min){
+
+  if (h<=TemMin) { 
+    String Alar_Tem_Min = "Superada la temperatura MINIMA" "\n";
+    Alar_Tem_Min += Temp_Actual + String(t,2);
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min, "");
+    Alar_Hum_Min = false;
+  }
+}
+
 }
 
     
