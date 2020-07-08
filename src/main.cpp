@@ -4,7 +4,12 @@
   
   Version:  V0.0.1 
 
-  Prueba versión v0.02 (alarma)
+  Prueba versión v0.02 (alarma) 
+
+-- Configuración de una alarma al superar valores prefefinidos
+-- Aviso de la alarma mediante bot de telegram
+-- Consulta de los valores predefinidos mediante el bot de telegram. 
+-- Aviso del estado acutal de temperatura y humedad, cuando salta la alarma. 
  
   Descripcion:
   Lectura de humedad y temperatura con dht22 y wemos d1 mini. Consulta mediante bot de telegram
