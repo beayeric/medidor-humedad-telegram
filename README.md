@@ -31,10 +31,23 @@ Crear bot de telegram: https://blogthinkbig.com/crear-bot-de-telegram-botfather
 
 Espacio de trabajo : https://gist.github.com/beayeric/578148c643d78d334279f16d0b67d86d
 
+
+
+ ////// ------------------ v0.0.2.  -------------------//////
+
+    -- Configuración de una alarma al superar valores prefefinidos
+    -- Aviso de la alarma mediante bot de telegram
+    -- Consulta de los valores predefinidos mediante el bot de telegram. 
+    -- Aviso del estado acutal de temperatura y humedad, cuando salta la alarma. 
+    
+    
+    Notas : CHAT_ID_PROPIO : Tienes que poner tu ID de usuario de telegram, el del bot. 
+    Lo puedes saber aquí --> https://telegram.me/getidsbot
+
+
+
 ////---- próximas versiones ---///
 
-1. Cuando llegue a una humedad me avise un mensaje de Telegram. v0.0.2
-2. Introducir la humedad de aviso con un comando de Telegram. v0.0.3
-3. Almacenar la humedad de aviso en Eeprom para que no se pierda al reiniciar. v0.0.4
-4. Hacer lo mismo con la temperatura. v1.0.0. 
+1. Actualizar el codigo via OTA . v0.0.3
+2. Almacenar la humedad de aviso en Eeprom para que no se pierda al reiniciar. v0.0.4
 
