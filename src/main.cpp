@@ -35,7 +35,7 @@ char ssid[] = "xxxxx";              // el nombre de su red SSID
 char password[] = "xxxx";       // la contraseña de su red
 
 #define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
-#define CHAT_ID_PROPIO “xxx”
+#define CHAT_ID_PROPIO “xxx”  // ID de tu usuario personal de TELEGRAM para que el bot te avise. No es lo mismo que el TOKEN
 
 //------- ---------------------- ------//
 
