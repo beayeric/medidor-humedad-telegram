@@ -4,6 +4,8 @@
   
   Version:  V0.0.1 
 
+  -- Consultar los valores de temperatura y humedad mediante bot de telegram
+
   Prueba versión v0.02 (alarma) 
 
 -- Configuración de una alarma al superar valores prefefinidos
@@ -53,36 +55,35 @@ bool Start = false;
 const int DHTPin = D4;  // Pin donde esta conectado ( por defecto en nuestro proyecto esta conectado en el pin 4)
 DHT dht(DHTPin, DHTTYPE);
 
-String str_tem = ""; // Declarar variables string globales para almacenar los valores de temperatura y humedad
+String str_tem = ""; // String globales para almacenar los valores de temperatura y humedad
 String str_hum = "";
-
-String Hum_Actual = "La humedad actual es: ";
+ 
+String Hum_Actual = "La humedad actual es: ";  // String globales para almacenar los valores de temperatura, humedad y luego mostarlos una vez superada la alarma
 String Temp_Actual = "La temperatura actual es: ";
 
-String Alarma_Hum_Maxima = "" ;
+String Alarma_Hum_Maxima = "" ; // String globales para almacenar los valores de temperatura y humedad
 String Alarma_Hum_Minima = "" ;
 
 float h=0.0; // Variable para la lecutra de la humedad
 float t=0.0; // Varíable para la lectura de la temperatura
 
-bool Alar_Hum_Max = true; // 
+// Función para arrancar la alarma, una vez que pasa por el IF terminara con un FALSE, para que el bucle no se repita --//
+
+bool Alar_Hum_Max = true; 
 bool Alar_Hum_Min = true;
 
-bool Alar_Tem_Max = true; //
+bool Alar_Tem_Max = true; 
 bool Alar_Tem_Min = true;
 
 
 
 // Limites máximos y minimos de temperatura y humedad --// 
 
-float HumMax = 46.0;
-float HumMin = 45.0;
+float HumMax = 60.0;
+float HumMin = 40.0;
 
-float TemMax = 20.0;
+float TemMax = 22.0;
 float TemMin = 19.0;
-
-
-
 
  
 //------------Configurar estados y respuestas del bot de telegram-----------------//
@@ -100,7 +101,7 @@ void handleNewMessages(int numNewMessages) {
     String from_name = bot.messages[i].from_name;
     if (from_name == "") from_name = "Guest";
 
-// --- comienza la parte que se puede personalizar -- //
+// --- Comienza la parte que se puede personalizar -- //
 // Respuesta a los mensajes del bot
 
     if (text == "/estado") { 
@@ -124,7 +125,7 @@ void handleNewMessages(int numNewMessages) {
       alarma += Alarma_Hum_Minima +"\n";
       bot.sendMessage(chat_id, alarma, "");
     }
-
+              /// ---- Parte donde puedes añadir las descripciones de las funciones del bot --- //
     if (text == "/start") {
       String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
       welcome += "Esta es una prueba de medidor de humedad y temperatura con bot de telegram.\n\n";
@@ -220,15 +221,12 @@ void loop() {
   }
 
 //--Funcion de alarma --//
-
-
-    
-
+       // HUMEDAD //
 if (Alar_Hum_Max){
 
   if (h>=HumMax) {
     String Alar_HumMax = "Superada la humedad MÁXIMA" "\n";
-    Alar_HumMax += Hum_Actual + String(h,2);
+    Alar_HumMax += Hum_Actual + String(h,2);  // Al saltar la alarma, tambíen mostrara la humedad o temperatura actual.
     bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
     Alar_Hum_Max = false;
   }
@@ -243,6 +241,7 @@ if (Alar_Hum_Min){
     Alar_Hum_Min = false;
   }
 }
+  // TEMPERATURA // 
 
 if (Alar_Tem_Max){
 
@@ -261,6 +260,7 @@ if (Alar_Tem_Min){
     Alar_Tem_Min += Temp_Actual + String(t,2);
     bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min, "");
     Alar_Hum_Min = false;
+    
   }
 }
 
