@@ -1,24 +1,27 @@
 /*
-  Autor:   Makers Bierzo
-  Fecha:     06/2020
+  Autor:     Makers Bierzo
+  Fecha:     09/07/2020
   
-  Version:  V0.0.1 
+  Version:    V0.0.1 
 
-  -- Consultar los valores de temperatura y humedad mediante bot de telegram
 
-  Prueba versión v0.02 (alarma) 
 
--- Configuración de una alarma al superar valores prefefinidos
--- Aviso de la alarma mediante bot de telegram
--- Consulta de los valores predefinidos mediante el bot de telegram. 
--- Aviso del estado acutal de temperatura y humedad, cuando salta la alarma. 
+
+  Version:    V0.0.2 
+
+    -- Configuración de una alarma al superar valores prefefinidos
+    -- Aviso de la alarma mediante bot de telegram
+    -- Consulta de los valores predefinidos mediante el bot de telegram. 
+    -- Aviso del estado acutal de temperatura y humedad, cuando salta la alarma. 
  
-  Descripcion:
+  
+  Descripcion HARDWARE :
   Lectura de humedad y temperatura con dht22 y wemos d1 mini. Consulta mediante bot de telegram
  
   Pinde de conexión del dht22:
   D4
  
+
 */
 
 #include <Arduino.h>
@@ -29,7 +32,7 @@
 #include "DHT.h" // Librería para el sensor  V1.3.4
 #include <Adafruit_Sensor.h> //Librería para la lectura del sensor V1.0.3
 
-//------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM ------//
+//------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM Y LA ID DE TU USUARIO DE TELEGRAM ------//
 
 char ssid[] = "xxxxx";              // el nombre de su red SSID
 char password[] = "xxxx";       // la contraseña de su red
@@ -265,5 +268,3 @@ if (Alar_Tem_Min){
 }
 
 }
-
-    
