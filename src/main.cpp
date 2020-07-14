@@ -31,11 +31,13 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM Y LA ID DE TU USUARIO DE TELEGRAM ------//
 
-char ssid[] = "xxxxx";              // el nombre de su red SSID
-char password[] = "xxxx";       // la contraseña de su red
+char ssid[] = "MOVISTAR_8002";              // el nombre de su red SSID
+char password[] = "MhPXue3fuhQGxHQcuNcE";       // la contraseña de su red
 
-#define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
-#define CHAT_ID_PROPIO “xxx”  // ID de tu usuario personal de TELEGRAM para que el bot te avise. No es lo mismo que el TOKEN // Puedes usar este bot para saber cual es tu ID https://telegram.me/getidsbot
+
+#define TELEGRAM_BOT_TOKEN "1214719176:AAFpskFrYxA66OVn4gf4dpwDRyqK2jpCCS4"  // TOKEN proporcionado por BOTFATHER
+#define CHAT_ID_PROPIO "644092158"
+
 
 //------- ---------------------- ------//
 
@@ -229,7 +231,8 @@ void loop() {
       Alar_Hum_Max = false;
     }
   }
-  if (Alar_Hum_Max == false && h< HumMax) {
+  
+if (Alar_Hum_Max == false && h< HumMax) {
     Alar_Hum_Max = true;
     String Alar_Hum_Max_Reset = "Valores normales" "\n";
     Alar_Hum_Max_Reset+= Temp_Actual + String (t,2);
@@ -245,7 +248,7 @@ void loop() {
     }
   }
 
-  if (Alar_Hum_Min == false && h> HumMin) {
+if (Alar_Hum_Min == false && h> HumMin) {
     Alar_Hum_Min = true;
     String Alar_Hum_Min_Reset = "Valores normales" "\n";
     Alar_Hum_Min_Reset+= Temp_Actual + String (t,2);
@@ -265,7 +268,8 @@ void loop() {
     }
     
   }
-  if (Alar_Tem_Max == false && t< TemMax) {
+
+if (Alar_Tem_Max == false && t< TemMax) {
     Alar_Tem_Max = true;
     String Alar_Tem_Max_Reset = "Valores normales" "\n";
     Alar_Tem_Max_Reset+= Temp_Actual + String (t,2);
@@ -283,7 +287,8 @@ void loop() {
       
     }
   }
-    if (Alar_Tem_Min == false && t > TemMax) {
+    
+if (Alar_Tem_Min == false && t > TemMax) {
       Alar_Tem_Min = true;
       String Alar_Tem_Min_Reset = "Valores normales" "\n";
       Alar_Tem_Min_Reset+= Temp_Actual + String (t,2);
