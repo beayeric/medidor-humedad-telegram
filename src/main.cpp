@@ -229,6 +229,11 @@ void loop() {
       Alar_Hum_Max = false;
     }
   }
+  if (Alar_Hum_Max == false && h< HumMax) {
+    Alar_Hum_Max = true;
+    String Alar_Hum_Max_Reset = "Valores normales" "\n";
+    Alar_Hum_Max_Reset+= Temp_Actual + String (t,2);
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Max_Reset, "");
 
   if (Alar_Hum_Min){
 
@@ -239,6 +244,14 @@ void loop() {
       Alar_Hum_Min = false;
     }
   }
+
+  if (Alar_Hum_Min == false && h> HumMin) {
+    Alar_Hum_Min = true;
+    String Alar_Hum_Min_Reset = "Valores normales" "\n";
+    Alar_Hum_Min_Reset+= Temp_Actual + String (t,2);
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Min_Reset, "");    
+    
+    }
   
   // TEMPERATURA // 
 
@@ -270,9 +283,11 @@ void loop() {
       
     }
   }
-if (Alar_Tem_Min == false && t > TemMax) {
-    Alar_Tem_Min = true;
-    String Alar_Tem_Min_Reset = "Valores normales" "\n";
-    Alar_Tem_Min_Reset+= Temp_Actual + String (t,2);
-    bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
+    if (Alar_Tem_Min == false && t > TemMax) {
+      Alar_Tem_Min = true;
+      String Alar_Tem_Min_Reset = "Valores normales" "\n";
+      Alar_Tem_Min_Reset+= Temp_Actual + String (t,2);
+      bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
+    }  
+  } 
 }
