@@ -250,7 +250,15 @@ void loop() {
       bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMax, "");
       Alar_Tem_Max = false;
     }
+    
   }
+  if (Alar_Tem_Max == false && t< TemMax) {
+    Alar_Tem_Max = true;
+    String Alar_Tem_Max_Reset = "Valores normales" "\n";
+    Alar_Tem_Max_Reset+= Temp_Actual + String (t,2);
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Max_Reset, "");
+
+}
 
   if (Alar_Tem_Min){
 
@@ -262,5 +270,9 @@ void loop() {
       
     }
   }
-
+if (Alar_Tem_Min == false && t > TemMax) {
+    Alar_Tem_Min = true;
+    String Alar_Tem_Min_Reset = "Valores normales" "\n";
+    Alar_Tem_Min_Reset+= Temp_Actual + String (t,2);
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
 }
