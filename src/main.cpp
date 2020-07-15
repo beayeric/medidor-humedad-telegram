@@ -31,13 +31,11 @@
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM Y LA ID DE TU USUARIO DE TELEGRAM ------//
 
-char ssid[] = "MOVISTAR_8002";              // el nombre de su red SSID
-char password[] = "MhPXue3fuhQGxHQcuNcE";       // la contraseña de su red
+char ssid[] = "****************";              // el nombre de su red SSID
+char password[] = "****************";       // la contraseña de su red
 
-
-#define TELEGRAM_BOT_TOKEN "1214719176:AAFpskFrYxA66OVn4gf4dpwDRyqK2jpCCS4"  // TOKEN proporcionado por BOTFATHER
-#define CHAT_ID_PROPIO "644092158"
-
+#define TELEGRAM_BOT_TOKEN "****************"  // TOKEN proporcionado por BOTFATHER
+#define CHAT_ID_PROPIO "****************"
 
 //------- ---------------------- ------//
 
@@ -63,8 +61,8 @@ String str_hum = "";
 String Hum_Actual = "La humedad actual es: ";  // String globales para almacenar los valores de temperatura, humedad y luego mostarlos una vez superada la alarma
 String Temp_Actual = "La temperatura actual es: ";
 
-String Alarma_Hum_Maxima = "" ; // String globales para almacenar los valores de temperatura y humedad
-String Alarma_Hum_Minima = "" ;
+String Alarma_Hum_Maxima = "La humedad máxima es: " ; // String globales para almacenar los valores máximos y mínimos de humedad
+String Alarma_Hum_Minima = "La humedad mínima es: " ;
 
 float h=0.0; // Variable para la lecutra de la humedad
 float t=0.0; // Varíable para la lectura de la temperatura
@@ -119,10 +117,9 @@ void handleNewMessages(int numNewMessages) {
     
     }
 
-    
-   if (text == "/alarma") { 
-      String alarma = Alarma_Hum_Maxima +"\n";
-      alarma += Alarma_Hum_Minima +"\n";
+    if (text == "/alarma") { 
+      String alarma = Alarma_Hum_Maxima + String(HumMax, 2) + "\n";
+      alarma += Alarma_Hum_Minima + String(HumMin, 2) + "\n";
       bot.sendMessage(chat_id, alarma, "");
     }
               /// ---- Parte donde puedes añadir las descripciones de las funciones del bot --- //
@@ -220,89 +217,76 @@ void loop() {
 
   }
 
-//--Funcion de alarma --//
-       // HUMEDAD //
+  //--Funcion de alarma --//
+  // HUMEDAD //
 
-if (Alar_Hum_Max){
-
-  if (h>=HumMax) {
-    String Alar_HumMax = "Superada la humedad MÁXIMA" "\n";
-    Alar_HumMax += Hum_Actual + String(h,2);  // Al saltar la alarma, tambíen mostrara la humedad o temperatura actual.
-    bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
-    Alar_Hum_Max = false;
+  if (Alar_Hum_Max){
+    if (h >= HumMax) {
+      String Alar_HumMax = "Estoy por encima de la humedad MÁXIMA" "\n";
+      Alar_HumMax += Hum_Actual + String(h,2);  // Al saltar la alarma, tambíen mostrara la humedad o temperatura actual.
+      bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
+      Alar_Hum_Max = false;
     }
   }
 
-  
-
-if (Alar_Hum_Min){
-
-    if (h<=HumMin) { 
-      String Alar_HumMin = "Superada la humedad MINIMA" "\n";
+  if (Alar_Hum_Min){
+    if (h <= HumMin) { 
+      String Alar_HumMin = "Estoy por debajo de la humedad MíNIMA" "\n";
       Alar_HumMin += Hum_Actual + String(h,2);
       bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
       Alar_Hum_Min = false;
     }
   }
 
+  // reactivación alarma humedad // 
 
-// reactivación alarma humedad // 
-
-if (Alar_Hum_Max == false && h< HumMax) {
+  if (Alar_Hum_Max == false && h < HumMax) {
     Alar_Hum_Max = true;
-    String Alar_Hum_Max_Reset = "Valores normales" "\n";
-    Alar_Hum_Max_Reset+= Temp_Actual + String (t,2);
+    String Alar_Hum_Max_Reset = "Alarma Humedad MÁXIMA restablecida" "\n";
+    Alar_Hum_Max_Reset += Hum_Actual + String (h,2);
     bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Max_Reset, "");
-    }
   }
 
-
-if (Alar_Hum_Min == false && h> HumMin) {
+  if (Alar_Hum_Min == false && h > HumMin) {
     Alar_Hum_Min = true;
-    String Alar_Hum_Min_Reset = "Valores normales" "\n";
-    Alar_Hum_Min_Reset+= Temp_Actual + String (t,2);
+    String Alar_Hum_Min_Reset = "Alarma Humedad MíNIMA restablecida" "\n";
+    Alar_Hum_Min_Reset += Hum_Actual + String (h,2);
     bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Min_Reset, "");    
-    }
   }
-}
+  
   // TEMPERATURA // 
-
-if (Alar_Tem_Max){
-
-    if (h>=TemMax) {
+  /*
+  if (Alar_Tem_Max){
+    if (t>=TemMax) {
       String Alar_TemMax = "Superada la temperatura Máxima" "\n";
       Alar_TemMax += Temp_Actual + String(t,2);
       bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMax, "");
       Alar_Tem_Max = false;
-    }    
-  }
+      }    
+    }
 
-if (Alar_Tem_Min){
-
-    if (h<=TemMin) { 
+  if (Alar_Tem_Min){
+    if (t<=TemMin) { 
       String Alar_TemMin = "Superada la temperatura MINIMA" "\n";
       Alar_TemMin += Temp_Actual + String(t,2);
       bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMin, "");
-      Alar_Tem_Min = false;
-      
+      Alar_Tem_Min = false;     
     }
   }
     
  // reactivar alamar temperatura //
- 
-if (Alar_Tem_Max == false && t< TemMax) {
+  if (Alar_Tem_Max == false && t< TemMax) {
     Alar_Tem_Max = true;
     String Alar_Tem_Max_Reset = "Valores normales" "\n";
-    Alar_Tem_Max_Reset+= Temp_Actual + String (t,2);
+    Alar_Tem_Max_Reset += Temp_Actual + String (t,2);
     bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Max_Reset, "");
   }
-}
 
-if (Alar_Tem_Min == false && t > TemMax) {
-      Alar_Tem_Min = true;
-      String Alar_Tem_Min_Reset = "Valores normales" "\n";
-      Alar_Tem_Min_Reset+= Temp_Actual + String (t,2);
-      bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
-    }  
-  } 
+  if (Alar_Tem_Min == false && t > TemMin) {
+    Alar_Tem_Min = true;
+    String Alar_Tem_Min_Reset = "Valores normales" "\n";
+    Alar_Tem_Min_Reset += Temp_Actual + String (t,2);
+    bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
+  }  
+  */
 }
