@@ -63,9 +63,6 @@ String Alarma_Hum_Minima = "La humedad mínima es: " ;
 String Alarma_Tem_Maxima = "La temperatura máxima es: " ; // String globales para almacenar los valores máximos y mínimos de temperatura
 String Alarma_Tem_Minima = "La temperatura mínima es: " ;
 
-int8 tempo_RestAlHumMax = 0;  // Variable para temporizar el restablecimiento de la alarma automáticamente
-int8 tempo_RestAlHumMin = 0;  // Variable para temporizar el restablecimiento de la alarma automáticamente
-
 float h=0.0; // Variable para la lecutra de la humedad
 float t=0.0; // Varíable para la lectura de la temperatura
 
@@ -226,6 +223,9 @@ void loop() {
     Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Max));
     Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Min));
 
+    Serial.println("Temporizador Restablecer Humedad Máxima : "+ String(tempo_RestAlHumMax));
+    Serial.println("Temporizador Restablecer Humedad Mínima : "+ String(tempo_RestAlHumMin));
+
     //--Funcion de alarma --//
   // HUMEDAD //
 
@@ -275,7 +275,9 @@ void loop() {
         Alar_Hum_Min = true;
         tempo_RestAlHumMin =0;
       }        
+      
     }
+
   
   
  /* // TEMPERATURA // 
@@ -318,3 +320,4 @@ void loop() {
   } 
  }
 }
+
