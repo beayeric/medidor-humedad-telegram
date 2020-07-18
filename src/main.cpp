@@ -222,51 +222,38 @@ void loop() {
     str_hum = "Humedad : " + String(h, 2);
     Serial.println(str_hum);
     
-   
-
-    // --- Mostrar el estado de la activación o no de las alarmas --//
-
-    // 1 activada 0 desactivada 
-
-    Serial.println("Estado Alarma Mum Max: "+ String(Alar_Hum_Max));
-    Serial.println("Estado Alarma Hum Min: "+ String(Alar_Hum_Min));
-
-    Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Max));
-    Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Min));
-
-    Serial.println("Temporizador Restablecer Humedad Máxima : "+ String(tempo_RestAlHumMax));
-    Serial.println("Temporizador Restablecer Humedad Mínima : "+ String(tempo_RestAlHumMin));
-
     //--Funcion de alarma --//
-  // HUMEDAD //
+    // HUMEDAD //
 
-  if (Alar_Hum_Max){
-    if (h >= HumMax) {
-      String Alar_HumMax = "Estoy por encima de la humedad MÁXIMA" "\n";
-      Alar_HumMax += Hum_Actual + String(h,2);  // Al saltar la alarma, tambíen mostrara la humedad o temperatura actual.
-      bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
-      Alar_Hum_Max = false;
+    if (Alar_Hum_Max){
+      if (h >= HumMax) {
+        String Alar_HumMax = "Estoy por encima de la humedad MÁXIMA" "\n";
+        Alar_HumMax += Hum_Actual + String(h,2);  // Al saltar la alarma, tambíen mostrara la humedad o temperatura actual.
+        bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
+        Alar_Hum_Max = false;
+      }
     } else {
       if (h >= HumMax) {
         tempo_RestAlHumMax = 0; // Para que la temporización sea con lecturas seguidas
       }
     }
 
-  if (Alar_Hum_Min){
-    if (h <= HumMin) { 
-      String Alar_HumMin = "Estoy por debajo de la humedad MíNIMA" "\n";
-      Alar_HumMin += Hum_Actual + String(h,2);
-      bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
-      Alar_Hum_Min = false;
+    if (Alar_Hum_Min){
+      if (h <= HumMin) { 
+        String Alar_HumMin = "Estoy por debajo de la humedad MíNIMA" "\n";
+        Alar_HumMin += Hum_Actual + String(h,2);
+        bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
+        Alar_Hum_Min = false;
+      } 
     } else {
       if (h <= HumMin){
         tempo_RestAlHumMin = 0; 
       }
     }
 
-  // reactivación alarma humedad // 
+    // reactivación alarma humedad // 
 
-  if (Alar_Hum_Max == false && h < HumMax) {
+    if (Alar_Hum_Max == false && h < HumMax) {
       tempo_RestAlHumMax++;
       if (tempo_RestAlHumMax == 10){
         String Alar_Hum_Max_Reset = "Alarma Humedad MÁXIMA restablecida" "\n";
@@ -286,9 +273,7 @@ void loop() {
         Alar_Hum_Min = true;
         tempo_RestAlHumMin =0;
       }        
-      
     }
-
   
   
  /* // TEMPERATURA // 
@@ -324,11 +309,23 @@ void loop() {
     bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
   }  */
   
- hBdt_lasttime = millis();
+    // --- Mostrar el estado de la activación o no de las alarmas --//
+
+    // 1 activada 0 desactivada 
+    Serial.println("Estado Alarma Mum Max: "+ String(Alar_Hum_Max));
+    Serial.println("Estado Alarma Hum Min: "+ String(Alar_Hum_Min));
+
+    Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Max));
+    Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Min));
+
+    Serial.println("Temporizador Restablecer Humedad Máxima : "+ String(tempo_RestAlHumMax));
+    Serial.println("Temporizador Restablecer Humedad Mínima : "+ String(tempo_RestAlHumMin));
+
+    hBdt_lasttime = millis();
 
   }
 
-  } 
- }
-}
+} 
+ 
+
 
