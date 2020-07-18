@@ -104,7 +104,7 @@ void handleNewMessages(int numNewMessages) {
 // --- Comienza la parte que se puede personalizar -- //
 // Respuesta a los mensajes del bot
 
-    if (text == "/estado") { 
+    if (text == "/control") { 
       String resultado = str_hum +"\n";
       resultado += str_tem +"\n";
       bot.sendMessage(chat_id, resultado, "");
@@ -119,7 +119,7 @@ void handleNewMessages(int numNewMessages) {
     
     }
 
-    if (text == "/alarma") { 
+    if (text == "/estado") { 
       String alarma = Alarma_Hum_Maxima + String(HumMax, 2) + "\n";
       alarma += Alarma_Hum_Minima + String(HumMin, 2) + "\n";
       alarma += String ("--------------") + "\n";
@@ -128,16 +128,27 @@ void handleNewMessages(int numNewMessages) {
       alarma += String ("--------------") + "\n";
       alarma += Hum_Actual +  String (h,2)+ "\n";
       alarma += Temp_Actual + String(t,2)+ "\n";
+      alarma += String ("--------------") + "\n";
+      alarma += String ("Estado alarma") + "\n";
+      alarma += String ("Estado Alarma Mum Max: ") + String(Alar_Hum_Max)+ "\n";
+      alarma += String ("Estado Alarma Hum Min: ") + String(Alar_Hum_Min)+ "\n";
+      alarma += String ("") + "\n";
+      alarma += String ("Estado Alarma Tem Max: ")+  String(Alar_Tem_Max)+ "\n";
+      alarma += String ("Estado Alarma Tem Max: ")+  String(Alar_Tem_Max)+ "\n";
+      alarma += String ("--------------") + "\n";
+      alarma += String ("Contador reset") + "\n";
+      alarma += String ("Temporizador Restablecer Humedad Máxima : " )+ String(tempo_RestAlHumMax)+ "\n";
+      alarma += String ("Temporizador Restablecer Humedad Mínima : " )+ String(tempo_RestAlHumMin)+ "\n";
       bot.sendMessage(chat_id, alarma, "");
     }
               /// ---- Parte donde puedes añadir las descripciones de las funciones del bot --- //
-    if (text == "/start") {
+    if (text == "/inicio") {
       String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
       welcome += "Esta es una prueba de medidor de humedad y temperatura con bot de telegram.\n\n";
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
       welcome += "/temperatura : para saber el estado de la temperatura\n";
-      welcome += "/estado : para saber estado de la humedad y la temperatura al mismo tiempo\n";
-      welcome += "/alarma : para saber los umbrales de humedad y temperatura\n";
+      welcome += "/control : para saber estado de la humedad y la temperatura al mismo tiempo\n";
+      welcome += "/estado : para saber el estado actual de todos los parametros.\n";
 
       bot.sendMessage(chat_id, welcome, "Markdown");
     }
