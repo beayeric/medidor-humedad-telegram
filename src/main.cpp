@@ -4,16 +4,15 @@
   
   Version:    V0.0.1 
   Version:    V0.0.2 
-    -- Configuración de una alarma al superar valores prefefinidos
+    -- Configuración de una alarma al alcanzar valores predefinidos
     -- Aviso de la alarma mediante bot de telegram
     -- Consulta de los valores predefinidos mediante el bot de telegram. 
     -- Aviso del estado acutal de temperatura y humedad, cuando salta la alarma. 
  
-  
   Descripcion HARDWARE :
   Lectura de humedad y temperatura con dht22 y wemos d1 mini. Consulta mediante bot de telegram
  
-  Pinde de conexión del dht22:
+  Pin de de conexión del dht22:
   D4
  
 */
@@ -22,9 +21,9 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h> //Incluimos la librería para  Telegram  - https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
-#include <ArduinoJson.h> // Incluimos la librería Json para el uso de la API de Telegram ATENCIÓN : Utilizar la versión 5.x.x porque las siguientes no funcioncionan -  https://github.com/bblanchon/ArduinoJson
-#include "DHT.h" // Librería para el sensor  V1.3.4
-#include <Adafruit_Sensor.h> //Librería para la lectura del sensor V1.0.3
+#include <ArduinoJson.h>          // Incluimos la librería Json para el uso de la API de Telegram ATENCIÓN : Utilizar la versión 5.x.x porque las siguientes no funcioncionan -  https://github.com/bblanchon/ArduinoJson
+#include "DHT.h"                  // Librería para el sensor  V1.3.4
+#include <Adafruit_Sensor.h>      //Librería para la lectura del sensor V1.0.3
 
 //------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM Y LA ID DE TU USUARIO DE TELEGRAM ------//
 
@@ -45,54 +44,49 @@ int dht_mtbs = 5000;    // tiempo entre lecturas 5 segundos
 long hBdt_lasttime;     // la última vez que se realizó la exploración de mensajes
 bool Start = false;
 
-
-// ----------- Funciones de temperatura -----------//
+// ----------- Variables globales de temperatura y humedad -----------//
 
 #define DHTTYPE DHT22   // TIPO DE SENSOR
 const int DHTPin = D4;  // Pin donde esta conectado ( por defecto en nuestro proyecto esta conectado en el pin 4)
 DHT dht(DHTPin, DHTTYPE);
 
-String str_tem = ""; // String globales para almacenar los valores de temperatura y humedad
+// Strings globales para almacenar los valores de temperatura y humedad
+String str_tem = "";               
 String str_hum = "";
- 
-String Hum_Actual = "La humedad actual es: ";  // String globales para almacenar los valores de temperatura, humedad y luego mostarlos una vez superada la alarma
+
+// Strings globales para almacenar los valores de temperatura y humedad actuales 
+String Hum_Actual = "La humedad actual es: ";  
 String Temp_Actual = "La temperatura actual es: ";
 
-String Alarma_Hum_Maxima = "La humedad máxima es: " ; // String globales para almacenar los valores máximos y mínimos de humedad
-String Alarma_Hum_Minima = "La humedad mínima es: " ;
+// Strings globales para almacenar los valores máximos y mínimos de humedad y la temperatura
+String Alarma_Hum_Maxima = "La humedad máxima es: "; 
+String Alarma_Hum_Minima = "La humedad mínima es: ";
+String Alarma_Tem_Maxima = "La temperatura máxima es: ";
+String Alarma_Tem_Minima = "La temperatura mínima es: ";
 
-String Alarma_Tem_Maxima = "La temperatura máxima es: " ; // String globales para almacenar los valores máximos y mínimos de temperatura
-String Alarma_Tem_Minima = "La temperatura mínima es: " ;
 
+float h=0.0;  // Variable para la lecutra de la humedad del dht
+float t=0.0;  // Variable para la lectura de la temperatura del dht
 
-float h=0.0; // Variable para la lecutra de la humedad
-float t=0.0; // Varíable para la lectura de la temperatura
-
-int8 tempo_RestAlHumMax = 0;  // Variable para temporizar el restablecimiento de la alarma automáticamente
-int8 tempo_RestAlHumMin = 0;  // Variable para temporizar el restablecimiento de la alarma automáticamente
-
-int8 tempo_RestAlTemMax = 0;  // Variable para temporizar el restablecimiento de la alarma automáticamente
+// Variables para temporizar el restablecimiento de los avisos automáticamente
+int8 tempo_RestAlHumMax = 0; 
+int8 tempo_RestAlHumMin = 0;  
+int8 tempo_RestAlTemMax = 0;  
 int8 tempo_RestAlTemMin = 0;
 
-// Función para arrancar la alarma, una vez que pasa por el IF terminara con un FALSE, para que el bucle no se repita --//
-
+// Variables bool para activar o desactivar los avisos
 bool Alar_Hum_Max = true; 
 bool Alar_Hum_Min = true;
-
 bool Alar_Tem_Max = true; 
 bool Alar_Tem_Min = true;
 
-// Limites máximos y minimos de temperatura y humedad --// 
-
+// Variables para los Limites máximos y minimos de temperatura y humedad --// 
 float HumMax = 60.0;
 float HumMin = 40.0;
-
 float TemMax = 22.0;
 float TemMin = 19.0;
-
  
 //------------Configurar estados y respuestas del bot de telegram-----------------//
-
 
  // -- Parte fija , no necesita modificaciones -- //
 void handleNewMessages(int numNewMessages) {
@@ -106,8 +100,8 @@ void handleNewMessages(int numNewMessages) {
     String from_name = bot.messages[i].from_name;
     if (from_name == "") from_name = "Guest";
 
-// --- Comienza la parte que se puede personalizar -- //
-// Respuesta a los mensajes del bot
+    // --- Comienza la parte que se puede personalizar -- //
+    // Respuesta a los mensajes del bot
 
     if (text == "/control") { 
       String resultado = str_hum +"\n";
@@ -149,8 +143,9 @@ void handleNewMessages(int numNewMessages) {
       alarma += String ("Temporizador Restablecer Temperatura Mínima : " )+ String(tempo_RestAlTemMin)+ "\n";
       bot.sendMessage(chat_id, alarma, "");
     }
-              /// ---- Parte donde puedes añadir las descripciones de las funciones del bot --- //
-    if (text == "/inicio") {
+    
+    /// ---- Parte donde puedes añadir las descripciones de las funciones del bot --- //
+    if (text == "/start") {
       String welcome = "Hola " + from_name + " esta es tu sala de control" ".\n";
       welcome += "Esta es una prueba de medidor de humedad y temperatura con bot de telegram.\n\n";
       welcome += "/humedad : para saber el nivel de humedad relativa\n";
@@ -163,11 +158,15 @@ void handleNewMessages(int numNewMessages) {
   }
 }
 
+//------- SETUP ------//
+
 void setup() {
+  
+  // Inicializamos el puerto serie y el sensor dht
   Serial.begin(115200);
   dht.begin();
 
-  // Establezca WiFi en modo estación y desconéctese de un AP si era anteriormente estaba conectado
+  // Establecer WiFi en modo estación y desconectarse de un AP, si estaba conectado.
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(100);
@@ -217,65 +216,70 @@ void loop() {
   // Cada tiempo definido en dht_mtbs leemos el sensor de temperatura/humedad
   if (millis() > hBdt_lasttime + dht_mtbs)  {
     
-    h = dht.readHumidity(); // Variable para la lecutra de la humedad
-    t = dht.readTemperature(); // Varíable para la lectura de la temperatura
+    h = dht.readHumidity();     // lecutra de la humedad
+    t = dht.readTemperature();  // lectura de la temperatura
 
     if (isnan(h) || isnan(t)) {
         Serial.println("¡Error al leer del sensor DHT!");
         return;
     }
-    // -- Conversión a String para mostrar los valores de la temperatura -- //
-    str_tem = "Temperatura : " + String(t, 2);   
-    Serial.println(str_tem);
-    str_hum = "Humedad : " + String(h, 2);
-    Serial.println(str_hum);
     
-    //--Funcion de alarma --//
+    // -- Conversión de valores t y h a String para poder mostrarlos con el Bot -- //
+    str_tem = "Temperatura : " + String(t, 2);   
+    Serial.println(str_tem);      // Mostrar Temperatura por el puerto serie
+    str_hum = "Humedad : " + String(h, 2);
+    Serial.println(str_hum);      // Mostrar Humedad por el puerto serie 
+    
+    //-- FUNCIONES DE AVISOS --//
+    
     // HUMEDAD //
-
+    // AVISO cuando la humedad es igual o superior al valor límite máximo
     if (Alar_Hum_Max){
       if (h >= HumMax) {
-        String Alar_HumMax = "Estoy por encima de la humedad MÁXIMA" "\n";
+        String Alar_HumMax = "Aviso por HUMEDAD MÁXIMA \n";
         Alar_HumMax += Hum_Actual + String(h,2);  // Al saltar la alarma, tambíen mostrara la humedad o temperatura actual.
         bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
         Alar_Hum_Max = false;
       }
     } else {
       if (h >= HumMax) {
-        tempo_RestAlHumMax = 0; // Para que la temporización sea con lecturas seguidas
+        tempo_RestAlHumMax = 0; // Para que la temporización sea con lecturas consecutivas
       }
     }
 
+    // AVISO cuando la humedad es igual o inferior al valor límite mínimo
     if (Alar_Hum_Min){
       if (h <= HumMin) { 
-        String Alar_HumMin = "Estoy por debajo de la humedad MíNIMA" "\n";
+        String Alar_HumMin = "Aviso por HUMEDAD MíNIMA \n";
         Alar_HumMin += Hum_Actual + String(h,2);
         bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
         Alar_Hum_Min = false;
       } 
     } else {
       if (h <= HumMin){
-        tempo_RestAlHumMin = 0; 
+        tempo_RestAlHumMin = 0; // Para que la temporización sea con lecturas consecutivas
       }
     }
 
-    // reactivación alarma humedad // 
-
+    // Reactivación de avisos de humeadad temporizados, después de 10 lecturaras consecutivas entre los valores límite // 
+    // Si el aviso está desactivado y la humedad es inferior al valor máximo 
+    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
     if (Alar_Hum_Max == false && h < HumMax) {
       tempo_RestAlHumMax++;
       if (tempo_RestAlHumMax == 10){
-        String Alar_Hum_Max_Reset = "Alarma Humedad MÁXIMA restablecida" "\n";
+        String Alar_Hum_Max_Reset = "Restablecido el aviso HUMEDAD MÁXIMA \n";
         Alar_Hum_Max_Reset += Hum_Actual + String (h,2);
         bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Max_Reset, "");
         Alar_Hum_Max = true;
         tempo_RestAlHumMax = 0;
       }
     }
-
+    // Si el aviso está desactivado y la humedad es superior al valor mínimo
+    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
     if (Alar_Hum_Min == false && h > HumMin) {
       tempo_RestAlHumMin++;
       if (tempo_RestAlHumMin == 10){
-        String Alar_Hum_Min_Reset = "Alarma Humedad MíNIMA restablecida" "\n";
+        String Alar_Hum_Min_Reset = "Restablecido el aviso HUMEDAD MíNIMA \n";
         Alar_Hum_Min_Reset += Hum_Actual + String (h,2);
         bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Min_Reset, "");
         Alar_Hum_Min = true;
@@ -284,41 +288,42 @@ void loop() {
     }
   
   
- // TEMPERATURA // 
-  
+    // TEMPERATURA // 
+    // AVISO cuando la temperatura es igual o superior al valor límite máximo
     if (Alar_Tem_Max){
-      if (t>=TemMax) {
-        String Alar_TemMax =  "Estoy por encima de la temperatura MÁXIMA" "\n";
+      if (t >= TemMax) {
+        String Alar_TemMax = "Aviso por TEMPERATURA MÁXIMA \n";
         Alar_TemMax += Temp_Actual + String(t,2);
         bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMax, "");
         Alar_Tem_Max = false;
       }    
-      } else {
+    } else {
       if (t >= TemMax) {
-        tempo_RestAlTemMax  = 0; // Para que la temporización sea con lecturas seguidas
+        tempo_RestAlTemMax  = 0; // Para que la temporización sea con lecturas consecutivas
       }
     }
   
-
+    // AVISO cuando la temperatura es igual o inferior al valor límite mínimo
     if (Alar_Tem_Min){
-      if (t<=TemMin) { 
-       String Alar_TemMin = "Estoy por debajo de la temperatura MíNIMA" "\n";
+      if (t <= TemMin) { 
+       String Alar_TemMin = "Aviso por TEMPERATURA MíNIMA \n";
        Alar_TemMin += Temp_Actual + String(t,2);
        bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMin, "");
        Alar_Tem_Min = false;     
       }
-      } else {
+    } else {
       if (t <= TemMin){
-        tempo_RestAlTemMin = 0; 
+        tempo_RestAlTemMin = 0; // Para que la temporización sea con lecturas consecutivas
       }
     }
   
-  // reactivar alamar temperatura //
-
+    // Reactivación de avisos de temperatura temporizados, después de 10 lecturaras consecutivas entre los valores límite // 
+    // Si el aviso está desactivado y la temperatura es inferior al valor máximo 
+    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
     if (Alar_Tem_Max == false && t < TemMax) {
       tempo_RestAlTemMax++;
       if (tempo_RestAlTemMax == 10) {
-       String Alar_Tem_Max_Reset = "Alarma temperatura MÁXIMA restablecida" "\n";
+       String Alar_Tem_Max_Reset = "Restablecido el aviso TEMPERATURA MÁXIMA \n";
        Alar_Tem_Max_Reset += Temp_Actual + String (t,2);
        bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Max_Reset, "");
        Alar_Tem_Max = true;
@@ -326,31 +331,34 @@ void loop() {
 
       }
     }
- 
+    
+    // Si el aviso está desactivado y la temperatura es superior al valor mínimo
+    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
     if (Alar_Tem_Min == false && t > TemMin) {
      tempo_RestAlTemMin++;
       if (tempo_RestAlTemMin == 10) {
-       String Alar_Tem_Min_Reset = "Alarma temperatura MíNIMA restablecida" "\n";
-       Alar_Tem_Min_Reset += Temp_Actual + String (t,2);
+       String Alar_Tem_Min_Reset = "Restablecido el aviso TEMPERATURA MíNIMA \n";
+       Alar_Tem_Min_Reset += Temp_Actual + String (t,2); 
        bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
        Alar_Tem_Min = true;
        tempo_RestAlTemMin = 0;
-
       }
     }
 
-    
     // --- Mostrar el estado de la activación o no de las alarmas --//
 
     // 1 activada 0 desactivada 
-    Serial.println("Estado Alarma Mum Max: "+ String(Alar_Hum_Max));
+    // Mostramos por el puerto serie el estado de las alarmas
+    Serial.println("Estado Alarma Hum Max: "+ String(Alar_Hum_Max));
     Serial.println("Estado Alarma Hum Min: "+ String(Alar_Hum_Min));
 
     Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Max));
     Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Min));
 
-    Serial.println("Temporizador Restablecer Humedad Máxima : "+ String(tempo_RestAlHumMax));
-    Serial.println("Temporizador Restablecer Humedad Mínima : "+ String(tempo_RestAlHumMin));
+    Serial.println("Temporizador Restablecer Hum Max : "+ String(tempo_RestAlHumMax));
+    Serial.println("Temporizador Restablecer Hum Min : "+ String(tempo_RestAlHumMin));
+    Serial.println("Temporizador Restablecer Temp Max : "+ String(tempo_RestAlTemMax));
+    Serial.println("Temporizador Restablecer Temp Min : "+ String(tempo_RestAlTemMin));
 
     hBdt_lasttime = millis();
 
