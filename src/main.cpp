@@ -24,14 +24,9 @@
 #include <ArduinoJson.h>          // Incluimos la librería Json para el uso de la API de Telegram ATENCIÓN : Utilizar la versión 5.x.x porque las siguientes no funcioncionan -  https://github.com/bblanchon/ArduinoJson
 #include "DHT.h"                  // Librería para el sensor  V1.3.4
 #include <Adafruit_Sensor.h>      //Librería para la lectura del sensor V1.0.3
+#include "Configuration.h"        //incorpora los datos de configuración de la wifi y del bot de telegram que creemos
 
-//------- DATOS PARA LA CONEXIÓN AL WIFI Y BOT DE TELEGRAM Y LA ID DE TU USUARIO DE TELEGRAM ------//
-
-char ssid[] = "xxxxx";              // el nombre de su red SSID
-char password[] = "xxxx";       // la contraseña de su red
-
-#define TELEGRAM_BOT_TOKEN "xxxxx"  // TOKEN proporcionado por BOTFATHER
-#define CHAT_ID_PROPIO “xxx”
+#define ONLINE_TIME 86400000      //24h para hacer un reset del ESP y evitar cuelgues
 
 //------- ---------------------- ------//
 
@@ -104,17 +99,17 @@ void handleNewMessages(int numNewMessages) {
     // Respuesta a los mensajes del bot
 
     if (text == "/control") { 
-      String resultado = str_hum +"\n";
-      resultado += str_tem +"\n";
+      String resultado = str_hum +" %"+"\n";
+      resultado += str_tem +" ºC"+"\n";
       bot.sendMessage(chat_id, resultado, "");
     }
 
     if (text == "/temperatura") {
-      bot.sendMessage(chat_id, str_tem , "");
+      bot.sendMessage(chat_id, str_tem , "" + " ºC");
     }
 
     if (text == "/humedad") {
-      bot.sendMessage(chat_id, str_hum , "");
+      bot.sendMessage(chat_id, str_hum , "" + " %");
     
     }
 
@@ -129,7 +124,7 @@ void handleNewMessages(int numNewMessages) {
       alarma += Temp_Actual + String(t,2)+ "\n";
       alarma += String ("--------------") + "\n";
       alarma += String ("Estado alarma") + "\n";
-      alarma += String ("Estado Alarma Mum Max: ") + String(Alar_Hum_Max)+ "\n";
+      alarma += String ("Estado Alarma Hum Max: ") + String(Alar_Hum_Max)+ "\n";
       alarma += String ("Estado Alarma Hum Min: ") + String(Alar_Hum_Min)+ "\n";
       alarma += String ("") + "\n";
       alarma += String ("Estado Alarma Tem Max: ")+  String(Alar_Tem_Max)+ "\n";
@@ -152,8 +147,12 @@ void handleNewMessages(int numNewMessages) {
       welcome += "/temperatura : para saber el estado de la temperatura\n";
       welcome += "/control : para saber estado de la humedad y la temperatura al mismo tiempo\n";
       welcome += "/estado : para saber el estado actual de todos los parametros.\n";
-
+      welcome += "/options : muestra una botonera con las opciones arriba indicadas.\n";
       bot.sendMessage(chat_id, welcome, "Markdown");
+    }
+    if (text == "/options") {
+      String keyboardJson = "[[\"/start\",\"/estado\",\"/control\"],[\"/temperatura\"],[\"/humedad\"]]";
+      bot.sendMessageWithReplyKeyboard(chat_id, "Elige una de estas opciones", "", keyboardJson, true);
     }
   }
 }
@@ -363,5 +362,9 @@ void loop() {
     hBdt_lasttime = millis();
 
   }
+  // condicional para reiniciar el ESP el tiempo definido (en este caso 24h) y evitar cuelgues
+  
+  if (millis() > ONLINE_TIME)
+    ESP.restart();
 
 } 
