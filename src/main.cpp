@@ -64,7 +64,8 @@ float h=0.0;  // Variable para la lecutra de la humedad del dht
 float t=0.0;  // Variable para la lectura de la temperatura del dht
 
 // Variables para temporizar el restablecimiento de los avisos automáticamente
-int8 tempo_RestAlHumMax = 0; 
+int num_rest = 120;     // Restablecer alaramas 120*5/60 = 10 minutos seguidos
+int8 tempo_RestAlHumMax = 0;
 int8 tempo_RestAlHumMin = 0;  
 int8 tempo_RestAlTemMax = 0;  
 int8 tempo_RestAlTemMin = 0;
@@ -78,9 +79,12 @@ bool Alar_Tem_Min = true;
 // Variables para los Limites máximos y minimos de temperatura y humedad --// 
 float HumMax = 60.0;
 float HumMin = 40.0;
-float TemMax = 22.0;
-float TemMin = 19.0;
+float TemMax = 30.0;
+float TemMin = 20.0;
  
+
+
+
 //------------Configurar estados y respuestas del bot de telegram-----------------//
 
  // -- Parte fija , no necesita modificaciones -- //
@@ -105,11 +109,11 @@ void handleNewMessages(int numNewMessages) {
     }
 
     if (text == "/temperatura") {
-      bot.sendMessage(chat_id, str_tem , "" + " ºC");
+      bot.sendMessage(chat_id, str_tem  + " ºC" , "");
     }
 
     if (text == "/humedad") {
-      bot.sendMessage(chat_id, str_hum , "" + " %");
+      bot.sendMessage(chat_id, str_hum  + " %", "");
     
     }
 
@@ -131,11 +135,11 @@ void handleNewMessages(int numNewMessages) {
       alarma += String ("Estado Alarma Tem Min: ")+  String(Alar_Tem_Min)+ "\n";
       alarma += String ("--------------") + "\n";
       alarma += String ("Contador reset") + "\n";
-      alarma += String ("Temporizador Restablecer Humedad Máxima : " )+ String(tempo_RestAlHumMax)+ "\n";
-      alarma += String ("Temporizador Restablecer Humedad Mínima : " )+ String(tempo_RestAlHumMin)+ "\n";
+      alarma += String ("Temporizador Restablecer Hum Max : " )+ String(tempo_RestAlHumMax)+ "\n";
+      alarma += String ("Temporizador Restablecer Hum Min : " )+ String(tempo_RestAlHumMin)+ "\n";
       alarma += String ("") + "\n";
-      alarma += String ("Temporizador Restablecer Temperatura Máxima : " )+ String(tempo_RestAlTemMax)+ "\n";
-      alarma += String ("Temporizador Restablecer Temperatura Mínima : " )+ String(tempo_RestAlTemMin)+ "\n";
+      alarma += String ("Temporizador Restablecer Temp Max : " )+ String(tempo_RestAlTemMax)+ "\n";
+      alarma += String ("Temporizador Restablecer Temp Min : " )+ String(tempo_RestAlTemMin)+ "\n";
       bot.sendMessage(chat_id, alarma, "");
     }
     
@@ -156,6 +160,158 @@ void handleNewMessages(int numNewMessages) {
     }
   }
 }
+
+//------------Mis Funciones-----------------//
+
+void avisoPorHumMax() {
+
+  if (Alar_Hum_Max){
+      if (h >= HumMax) {
+        String Alar_HumMax = "Aviso por HUMEDAD MÁXIMA \n";
+        // Al saltar la alarma, tambíen mostrara la humedad actual.
+        Alar_HumMax += Hum_Actual + String(h,2);  
+        bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
+        Alar_Hum_Max = false;
+      }
+    } else {
+      if (h >= HumMax) {
+        // Para que la temporización sea con lecturas consecutivas
+        tempo_RestAlHumMax = 0; 
+      }
+    }
+
+}
+
+void avisoPorHumMin() {
+
+  if (Alar_Hum_Min){
+      if (h <= HumMin) { 
+        String Alar_HumMin = "Aviso por HUMEDAD MíNIMA \n";
+        // Al saltar la alarma, tambíen mostrara la humedad actual.
+        Alar_HumMin += Hum_Actual + String(h,2);
+        bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
+        Alar_Hum_Min = false;
+      } 
+    } else {
+      if (h <= HumMin){
+        // Para que la temporización sea con lecturas consecutivas
+        tempo_RestAlHumMin = 0; 
+      }
+    }
+
+}
+
+void restablecerAviPorHumMax(){
+
+    // Si el aviso está desactivado y la humedad es inferior al valor máximo 
+    // podemos restablecer el aviso si esto sucede num_rest veces seguidas 
+    if (Alar_Hum_Max == false && h < HumMax) {
+      tempo_RestAlHumMax++;
+      if (tempo_RestAlHumMax == num_rest){
+        String Alar_Hum_Max_Reset = "Restablecido el aviso HUMEDAD MÁXIMA \n";
+        Alar_Hum_Max_Reset += Hum_Actual + String (h,2);
+        bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Max_Reset, "");
+        Alar_Hum_Max = true;
+        tempo_RestAlHumMax = 0;
+      }
+    }
+
+}
+
+void restablecerAviPorHumMin(){
+    
+    // Si el aviso está desactivado y la humedad es superior al valor mínimo
+    // podemos restablecer el aviso si esto sucede num_rest veces seguidas 
+    if (Alar_Hum_Min == false && h > HumMin) {
+      tempo_RestAlHumMin++;
+      if (tempo_RestAlHumMin == num_rest){
+        String Alar_Hum_Min_Reset = "Restablecido el aviso HUMEDAD MíNIMA \n";
+        Alar_Hum_Min_Reset += Hum_Actual + String (h,2);
+        bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Min_Reset, "");
+        Alar_Hum_Min = true;
+        tempo_RestAlHumMin =0;
+      }        
+    }
+
+}
+
+void avisoPorTemMax(){
+
+  if (Alar_Tem_Max){
+      if (t >= TemMax) {
+        String Alar_TemMax = "Aviso por TEMPERATURA MÁXIMA \n";
+        // Al saltar la alarma, tambíen mostrara la temperatura actual.
+        Alar_TemMax += Temp_Actual + String(t,2);
+        bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMax, "");
+        Alar_Tem_Max = false;
+      }    
+    } else {
+      if (t >= TemMax) {
+        // Para que la temporización sea con lecturas consecutivas
+        tempo_RestAlTemMax  = 0; 
+      }
+    }
+
+}
+
+void avisoPorTemMin(){
+
+   if (Alar_Tem_Min){
+      if (t <= TemMin) { 
+       String Alar_TemMin = "Aviso por TEMPERATURA MíNIMA \n";
+       // Al saltar la alarma, tambíen mostrara la temperatura actual.
+       Alar_TemMin += Temp_Actual + String(t,2);
+       bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMin, "");
+       Alar_Tem_Min = false;     
+      }
+    } else {
+      if (t <= TemMin){
+        // Para que la temporización sea con lecturas consecutivas
+        tempo_RestAlTemMin = 0; 
+      }
+    }
+
+}
+
+void restablecerAviPorTemMax(){
+
+    // Si el aviso está desactivado y la temperatura es inferior al valor máximo 
+    // podemos restablecer el aviso si esto sucede num_rest veces seguidas 
+    if (Alar_Tem_Max == false && t < TemMax) {
+      tempo_RestAlTemMax++;
+      if (tempo_RestAlTemMax == num_rest) {
+       String Alar_Tem_Max_Reset = "Restablecido el aviso TEMPERATURA MÁXIMA \n";
+       Alar_Tem_Max_Reset += Temp_Actual + String (t,2);
+       bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Max_Reset, "");
+       Alar_Tem_Max = true;
+       tempo_RestAlTemMax  = 0;
+
+      }
+    }
+
+}
+
+void restablecerAviPorTemMin(){
+
+    // Si el aviso está desactivado y la temperatura es superior al valor mínimo
+    // podemos restablecer el aviso si esto sucede num_rest veces seguidas 
+    if (Alar_Tem_Min == false && t > TemMin) {
+     tempo_RestAlTemMin++;
+      if (tempo_RestAlTemMin == num_rest) {
+       String Alar_Tem_Min_Reset = "Restablecido el aviso TEMPERATURA MíNIMA \n";
+       Alar_Tem_Min_Reset += Temp_Actual + String (t,2); 
+       bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
+       Alar_Tem_Min = true;
+       tempo_RestAlTemMin = 0;
+      }
+    }
+
+}
+
+void saludoBot(){
+  bot.sendMessage(CHAT_ID_PROPIO, "Saludos, volvemos a empezar ;)", "");
+}
+
 
 //------- SETUP ------//
 
@@ -191,9 +347,11 @@ void setup() {
   //bot._debug = true; // para ver el funcionamiento del bot
 
   // Comunicación de manera segura
-  bot._debug = true; // para ver el funcionamiento del bot
+  //bot._debug = true; // para ver el funcionamiento del bot
   const uint8_t fingerprint[20] = { 0xF2, 0xAD, 0x29, 0x9C, 0x34, 0x48, 0xDD, 0x8D, 0xF4, 0xCF, 0x52, 0x32, 0xF6, 0x57, 0x33, 0x68, 0x2E, 0x81, 0xC1, 0x90 };
   client.setFingerprint(fingerprint);
+
+  saludoBot();
 
 }
 
@@ -233,117 +391,27 @@ void loop() {
     
     // HUMEDAD //
     // AVISO cuando la humedad es igual o superior al valor límite máximo
-    if (Alar_Hum_Max){
-      if (h >= HumMax) {
-        String Alar_HumMax = "Aviso por HUMEDAD MÁXIMA \n";
-        Alar_HumMax += Hum_Actual + String(h,2);  // Al saltar la alarma, tambíen mostrara la humedad o temperatura actual.
-        bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMax, "");
-        Alar_Hum_Max = false;
-      }
-    } else {
-      if (h >= HumMax) {
-        tempo_RestAlHumMax = 0; // Para que la temporización sea con lecturas consecutivas
-      }
-    }
-
+    avisoPorHumMax();
     // AVISO cuando la humedad es igual o inferior al valor límite mínimo
-    if (Alar_Hum_Min){
-      if (h <= HumMin) { 
-        String Alar_HumMin = "Aviso por HUMEDAD MíNIMA \n";
-        Alar_HumMin += Hum_Actual + String(h,2);
-        bot.sendMessage(CHAT_ID_PROPIO, Alar_HumMin, "");
-        Alar_Hum_Min = false;
-      } 
-    } else {
-      if (h <= HumMin){
-        tempo_RestAlHumMin = 0; // Para que la temporización sea con lecturas consecutivas
-      }
-    }
+    avisoPorHumMin();
 
-    // Reactivación de avisos de humeadad temporizados, después de 10 lecturaras consecutivas entre los valores límite // 
-    // Si el aviso está desactivado y la humedad es inferior al valor máximo 
-    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
-    if (Alar_Hum_Max == false && h < HumMax) {
-      tempo_RestAlHumMax++;
-      if (tempo_RestAlHumMax == 10){
-        String Alar_Hum_Max_Reset = "Restablecido el aviso HUMEDAD MÁXIMA \n";
-        Alar_Hum_Max_Reset += Hum_Actual + String (h,2);
-        bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Max_Reset, "");
-        Alar_Hum_Max = true;
-        tempo_RestAlHumMax = 0;
-      }
-    }
-    // Si el aviso está desactivado y la humedad es superior al valor mínimo
-    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
-    if (Alar_Hum_Min == false && h > HumMin) {
-      tempo_RestAlHumMin++;
-      if (tempo_RestAlHumMin == 10){
-        String Alar_Hum_Min_Reset = "Restablecido el aviso HUMEDAD MíNIMA \n";
-        Alar_Hum_Min_Reset += Hum_Actual + String (h,2);
-        bot.sendMessage(CHAT_ID_PROPIO, Alar_Hum_Min_Reset, "");
-        Alar_Hum_Min = true;
-        tempo_RestAlHumMin =0;
-      }        
-    }
+    // Reactivación de avisos de humedad temporizados,
+    restablecerAviPorHumMax(); 
+    restablecerAviPorHumMin();
   
   
     // TEMPERATURA // 
     // AVISO cuando la temperatura es igual o superior al valor límite máximo
-    if (Alar_Tem_Max){
-      if (t >= TemMax) {
-        String Alar_TemMax = "Aviso por TEMPERATURA MÁXIMA \n";
-        Alar_TemMax += Temp_Actual + String(t,2);
-        bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMax, "");
-        Alar_Tem_Max = false;
-      }    
-    } else {
-      if (t >= TemMax) {
-        tempo_RestAlTemMax  = 0; // Para que la temporización sea con lecturas consecutivas
-      }
-    }
-  
-    // AVISO cuando la temperatura es igual o inferior al valor límite mínimo
-    if (Alar_Tem_Min){
-      if (t <= TemMin) { 
-       String Alar_TemMin = "Aviso por TEMPERATURA MíNIMA \n";
-       Alar_TemMin += Temp_Actual + String(t,2);
-       bot.sendMessage(CHAT_ID_PROPIO, Alar_TemMin, "");
-       Alar_Tem_Min = false;     
-      }
-    } else {
-      if (t <= TemMin){
-        tempo_RestAlTemMin = 0; // Para que la temporización sea con lecturas consecutivas
-      }
-    }
-  
-    // Reactivación de avisos de temperatura temporizados, después de 10 lecturaras consecutivas entre los valores límite // 
-    // Si el aviso está desactivado y la temperatura es inferior al valor máximo 
-    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
-    if (Alar_Tem_Max == false && t < TemMax) {
-      tempo_RestAlTemMax++;
-      if (tempo_RestAlTemMax == 10) {
-       String Alar_Tem_Max_Reset = "Restablecido el aviso TEMPERATURA MÁXIMA \n";
-       Alar_Tem_Max_Reset += Temp_Actual + String (t,2);
-       bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Max_Reset, "");
-       Alar_Tem_Max = true;
-       tempo_RestAlTemMax  = 0;
-
-      }
-    }
+    avisoPorTemMax();
     
-    // Si el aviso está desactivado y la temperatura es superior al valor mínimo
-    // podemos restablecer el aviso si esto sucede 10 veces seguidas 
-    if (Alar_Tem_Min == false && t > TemMin) {
-     tempo_RestAlTemMin++;
-      if (tempo_RestAlTemMin == 10) {
-       String Alar_Tem_Min_Reset = "Restablecido el aviso TEMPERATURA MíNIMA \n";
-       Alar_Tem_Min_Reset += Temp_Actual + String (t,2); 
-       bot.sendMessage(CHAT_ID_PROPIO, Alar_Tem_Min_Reset, "");
-       Alar_Tem_Min = true;
-       tempo_RestAlTemMin = 0;
-      }
-    }
+    // AVISO cuando la temperatura es igual o inferior al valor límite mínimo
+    avisoPorTemMin();
 
+    // Reactivación de avisos de temperatura temporizados,
+    restablecerAviPorTemMax();
+    restablecerAviPorTemMin();
+  
+    
     // --- Mostrar el estado de la activación o no de las alarmas --//
 
     // 1 activada 0 desactivada 
@@ -352,7 +420,7 @@ void loop() {
     Serial.println("Estado Alarma Hum Min: "+ String(Alar_Hum_Min));
 
     Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Max));
-    Serial.println("Estado Alarma Tem Max: "+ String(Alar_Tem_Min));
+    Serial.println("Estado Alarma Tem Min: "+ String(Alar_Tem_Min));
 
     Serial.println("Temporizador Restablecer Hum Max : "+ String(tempo_RestAlHumMax));
     Serial.println("Temporizador Restablecer Hum Min : "+ String(tempo_RestAlHumMin));
